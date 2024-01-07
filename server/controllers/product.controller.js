@@ -56,16 +56,17 @@ const getProducts = asyncHandler(async (req, res) => {
   const page = +req.query.page || 1
   const limit = +req.query.limit || process.env.LIMIT_PRODUCTS
   const skip = (page - 1) * limit
+  queryCommand.skip(skip).limit(limit)
 
   // execute query
   queryCommand.exec(async (error, response) => {
     if (error) throw new Error(error.message)
     const counts = await Product.find(formattedQueries).countDocuments()
-  })
-  return res.status(200).json({
-    success: response ? true : false,
-    productDatas: response ? response : 'Cant get products',
-    counts
+    return res.status(200).json({
+      success: response ? true : false,
+      products: response ? response : 'Cant get products',
+      counts
+    })
   })
 })
 
@@ -134,11 +135,28 @@ const ratings = asyncHandler(async (req, res) => {
   })
 })
 
+const uploadImgProduct = asyncHandler(async (req, res) => {
+  const { pid } = req.params
+  if (!req.files) throw new Error('Missing value')
+  const response = await Product.findByIdAndUpdate(
+    pid,
+    {
+      $push: { images: { $each: req.files.map((e) => e.path) } }
+    },
+    { new: true }
+  )
+  return res.status(200).json({
+    status: response ? true : false,
+    updatedProduct: response ? response : 'Cant upload image product'
+  })
+})
+
 module.exports = {
   createProduct,
   getProduct,
   getProducts,
   updateProduct,
   deleteProduct,
-  ratings
+  ratings,
+  uploadImgProduct
 }

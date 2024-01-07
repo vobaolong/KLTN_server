@@ -1,4 +1,3 @@
-const slugify = require('slugify')
 const Blog = require('../models/blog.model')
 const asyncHandler = require('express-async-handler')
 
@@ -146,6 +145,22 @@ const deleteBlog = asyncHandler(async () => {
   })
 })
 
+const uploadImgBlog = asyncHandler(async (req, res) => {
+  const { bid } = req.params
+  if (!req.file) throw new Error('Missing value')
+  const response = await Blog.findByIdAndUpdate(
+    bid,
+    {
+      image: req.file.path
+    },
+    { new: true }
+  )
+  return res.status(200).json({
+    status: response ? true : false,
+    updatedBlog: response ? response : 'Cant upload image blog'
+  })
+})
+
 module.exports = {
   createBlog,
   updateBlog,
@@ -153,5 +168,6 @@ module.exports = {
   getBlog,
   likeBlog,
   dislikeBlog,
-  deleteBlog
+  deleteBlog,
+  uploadImgBlog
 }
