@@ -1,7 +1,7 @@
-import React from "react"
-import { Route, Routes } from "react-router-dom"
-import path from "./utils/path"
-import { Home, Public, Login } from "./pages/public"
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import path from './utils/path'
+import { Home, Public, Login } from './pages/public'
 
 function App() {
   return (
