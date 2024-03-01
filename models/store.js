@@ -79,7 +79,7 @@ const storeSchema = new mongoose.Schema(
       type: Number,
       default: 4,
       min: 0,
-      max: 5
+      max: 5.0
     }
   },
   { timestamps: true }

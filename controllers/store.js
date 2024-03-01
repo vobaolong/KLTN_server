@@ -413,7 +413,7 @@ exports.addFeatureImage = (req, res) => {
     } catch {}
 
     return res.status(400).json({
-      error: 'The limit is 7 images'
+      error: 'Limit is 7 images'
     })
   }
 

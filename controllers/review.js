@@ -147,6 +147,7 @@ exports.updateRating = (req, res) => {
         const rating = temp
           ? (parseFloat(temp.rating) / parseFloat(temp.count)).toFixed(1)
           : 3
+
         Product.findOneAndUpdate({ _id: productId }, { $set: { rating } })
           .exec()
           .then((product) => {

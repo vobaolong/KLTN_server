@@ -16,7 +16,7 @@ const {
   activeProduct,
   addToListImages,
   updateListImages,
-  removefromListImages,
+  removeFromListImages,
   listProductCategories,
   listProductCategoriesByStore,
   listProducts,
@@ -89,7 +89,7 @@ router.delete(
   '/product/images/:productId/:storeId/:userId',
   isAuth,
   isManager,
-  removefromListImages
+  removeFromListImages
 )
 
 //router params

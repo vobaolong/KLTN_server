@@ -53,7 +53,7 @@ const productSchema = new mongoose.Schema(
     },
     listImages: {
       type: [String],
-      validate: [listImagesLimit, 'The limit is 7 images'],
+      validate: [listImagesLimit, 'Limit is 7 images'],
       default: []
     },
     categoryId: {
@@ -79,7 +79,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 4,
       min: 0,
-      max: 5
+      max: 5.0
     }
   },
   { timestamps: true }

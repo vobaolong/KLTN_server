@@ -368,7 +368,7 @@ exports.addToListImages = (req, res) => {
     } catch {}
 
     return res.status(400).json({
-      error: 'The limit is 7 images'
+      error: 'Limit is 7 images'
     })
   }
 
@@ -491,7 +491,7 @@ exports.updateListImages = (req, res) => {
     })
 }
 
-exports.removefromListImages = (req, res) => {
+exports.removeFromListImages = (req, res) => {
   const index = req.query.index ? parseInt(req.query.index) : -1
   if (index == -1) {
     return res.status(400).json({
