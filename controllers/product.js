@@ -2,7 +2,7 @@ const Product = require('../models/product')
 const Category = require('../models/category')
 const fs = require('fs')
 const { errorHandler } = require('../helpers/errorHandler')
-
+//
 exports.productById = (req, res, next, id) => {
   Product.findById(id, (error, product) => {
     if (error || !product) {
@@ -10,7 +10,6 @@ exports.productById = (req, res, next, id) => {
         error: 'Product not found'
       })
     }
-
     req.product = product
     next()
   })
@@ -100,18 +99,6 @@ exports.createProduct = (req, res) => {
     styleValueIds
   } = req.fields
   const listImages = req.filepaths
-
-  // console.log(
-  //     name,
-  //     description,
-  //     price,
-  //     salePrice,
-  //     quantity,
-  //     categoryId,
-  //     styleValueIds,
-  //     listImages,
-  // );
-
   if (
     !name ||
     !description ||
@@ -137,7 +124,6 @@ exports.createProduct = (req, res) => {
   if (styleValueIds) {
     styleValueIdsArray = styleValueIds.split('|')
   }
-
   const product = new Product({
     name,
     description,

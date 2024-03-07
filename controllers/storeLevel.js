@@ -23,7 +23,7 @@ exports.getStoreLevel = (req, res) => {
     .exec()
     .then((lvs) => {
       return res.json({
-        succes: 'Get store level successfully',
+        success: 'Get store level successfully',
         level: {
           point: req.store.point,
           name: lvs[0].name,

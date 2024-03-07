@@ -120,7 +120,7 @@ exports.checkFollowingProduct = (req, res) => {
     })
     .catch((error) => {
       return res.status(404).json({
-        error: 'Following product not found'
+        error: 'Favorite product not found'
       })
     })
 }

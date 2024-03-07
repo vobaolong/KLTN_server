@@ -23,7 +23,7 @@ exports.getUserLevel = (req, res) => {
     .exec()
     .then((lvs) => {
       return res.json({
-        succes: 'Get user level successfully',
+        success: 'Get user level successfully',
         level: {
           point: req.user.point,
           name: lvs[0].name,
