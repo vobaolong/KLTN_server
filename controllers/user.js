@@ -132,9 +132,9 @@ exports.updatePassword = (req, res) => {
 exports.addAddress = (req, res) => {
   let addresses = req.user.addresses
 
-  if (addresses.length >= 6) {
+  if (addresses.length >= 10) {
     return res.status(400).json({
-      error: 'The limit is 6 addresses'
+      error: 'The limit is 10 addresses'
     })
   }
 
@@ -168,7 +168,7 @@ exports.addAddress = (req, res) => {
 
 exports.updateAddress = (req, res) => {
   const addressIndex =
-    req.query.index && req.query.index >= 0 && req.query.index <= 6
+    req.query.index && req.query.index >= 0 && req.query.index <= 10
       ? parseInt(req.query.index)
       : -1
   if (addressIndex == -1)
@@ -216,7 +216,7 @@ exports.updateAddress = (req, res) => {
 
 exports.removeAddress = (req, res) => {
   const addressIndex =
-    req.query.index && req.query.index >= 0 && req.query.index <= 6
+    req.query.index && req.query.index >= 0 && req.query.index <= 10
       ? parseInt(req.query.index)
       : -1
   if (addressIndex == -1)

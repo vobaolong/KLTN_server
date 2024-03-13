@@ -148,7 +148,7 @@ userSchema.methods = {
 
 //validators
 function addressesLimit(val) {
-  return val.length <= 6
+  return val.length <= 10
 }
 
 function nameAvailable(val) {
