@@ -51,6 +51,7 @@ exports.listOrderItems = (req, res) => {
         select: {
           _id: 1,
           name: 1,
+          address: 1,
           avatar: 1,
           isActive: 1,
           isOpen: 1
@@ -161,7 +162,7 @@ exports.listOrderByUser = (req, res) => {
         .skip(skip)
         .limit(limit)
         .populate('userId', '_id firstName lastName avatar')
-        .populate('storeId', '_id name avatar isActive isOpen')
+        .populate('storeId', '_id name address avatar isActive isOpen')
         .populate('deliveryId')
         .populate('commissionId')
         .exec()
@@ -265,7 +266,7 @@ exports.listOrderByStore = (req, res) => {
         .skip(skip)
         .limit(limit)
         .populate('userId', '_id firstName lastName avatar')
-        .populate('storeId', '_id name avatar isActive isOpen')
+        .populate('storeId', '_id name address avatar isActive isOpen')
         .populate('deliveryId')
         .populate('commissionId')
         .exec()
@@ -366,7 +367,7 @@ exports.listOrderForAdmin = (req, res) => {
         .skip(skip)
         .limit(limit)
         .populate('userId', '_id firstName lastName avatar')
-        .populate('storeId', '_id name avatar isActive isOpen')
+        .populate('storeId', '_id name address avatar isActive isOpen')
         .populate('deliveryId')
         .populate('commissionId')
         .exec()
@@ -537,7 +538,7 @@ exports.checkOrderAuth = (req, res, next) => {
 exports.readOrder = (req, res) => {
   Order.findOne({ _id: req.order._id })
     .populate('userId', '_id firstName lastName avatar')
-    .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('storeId', '_id name address avatar isActive isOpen')
     .populate('deliveryId')
     .populate('commissionId')
     .exec()
@@ -587,7 +588,7 @@ exports.updateStatusForUser = (req, res, next) => {
     { new: true }
   )
     .populate('userId', '_id firstName lastName avatar')
-    .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('storeId', '_id name address avatar isActive isOpen')
     .populate('deliveryId')
     .populate('commissionId')
     .exec()
@@ -654,7 +655,7 @@ exports.updateStatusForStore = (req, res, next) => {
     { new: true }
   )
     .populate('userId', '_id firstName lastName avatar')
-    .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('storeId', '_id name address avatar isActive isOpen')
     .populate('deliveryId')
     .populate('commissionId')
     .exec()
@@ -713,7 +714,7 @@ exports.updateStatusForAdmin = (req, res, next) => {
     { new: true }
   )
     .populate('userId', '_id firstName lastName avatar')
-    .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('storeId', '_id name address avatar isActive isOpen')
     .populate('deliveryId')
     .populate('commissionId')
     .exec()

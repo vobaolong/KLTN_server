@@ -77,11 +77,11 @@ exports.getStoreProfile = (req, res) => {
 }
 
 exports.createStore = (req, res) => {
-  const { name, bio, commissionId } = req.fields
+  const { name, bio, address, commissionId } = req.fields
   const avatar = req.filepaths[0]
   const cover = req.filepaths[1]
 
-  if (!name || !bio || !commissionId || !avatar || !cover) {
+  if (!name || !bio || !address || !commissionId || !avatar || !cover) {
     try {
       fs.unlinkSync('public' + req.filepaths[0])
       fs.unlinkSync('public' + req.filepaths[1])
@@ -95,6 +95,7 @@ exports.createStore = (req, res) => {
   const store = new Store({
     name,
     bio,
+    address,
     commissionId,
     avatar,
     cover,
@@ -120,11 +121,11 @@ exports.createStore = (req, res) => {
 }
 
 exports.updateStore = (req, res) => {
-  const { name, bio } = req.body
+  const { name, bio, address } = req.body
 
   Store.findOneAndUpdate(
     { _id: req.store._id },
-    { $set: { name, bio } },
+    { $set: { name, bio, address } },
     { new: true }
   )
     .populate('ownerId')

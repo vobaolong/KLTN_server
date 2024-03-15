@@ -19,6 +19,11 @@ const storeSchema = new mongoose.Schema(
       slug: 'name',
       unique: true
     },
+    address: {
+      type: String,
+      trim: true,
+      maxLength: 200
+    },
     bio: {
       type: String,
       trim: true,
