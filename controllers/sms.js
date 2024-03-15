@@ -13,7 +13,7 @@ exports.sendNotificationSMS = (req, res) => {
   if (!phone) {
     console.log('---NO PHONE PROVIDED---')
   } else {
-    const from = 'ZenMetic'
+    const from = 'Zenpii'
     const to = '84' + phone.slice(1)
     text = code ? ` Your CODE: ${code}` : ''
 
@@ -45,7 +45,7 @@ exports.sendConfirmationSMS = (req, res) => {
     vonage.verify.request(
       {
         number: '84' + req.user.phone.slice(1),
-        brand: 'ZENMETIC'
+        brand: 'Zenpii'
       },
       (err, result) => {
         if (err) {

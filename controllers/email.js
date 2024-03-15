@@ -23,12 +23,12 @@ exports.sendChangePasswordEmail = (req, res, next) => {
       .sendMail({
         from: process.env.ADMIN_EMAIL,
         to: email,
-        subject: `ZenMetic Ecommerce - ${title}`,
+        subject: `Zenpii Ecommerce - ${title}`,
         html: `<div>
-                    <h2>ZENMETIC!</h2>
+                    <h2>Zenpii!</h2>
                     <h1>${title}</h1>
                     <p>Hi ${name},</p>
-                    <p>Thank you for choosing ZenMetic.</p>
+                    <p>Thank you for choosing Zenpii.</p>
                     <p>${text}</p>
                     ${
                       code
@@ -91,12 +91,12 @@ exports.sendConfirmationEmail = (req, res) => {
             .sendMail({
               from: process.env.ADMIN_EMAIL,
               to: email,
-              subject: `ZenMetic Ecommerce - ${title}`,
+              subject: `Zenpii Ecommerce - ${title}`,
               html: `<div>
-                    <h2>ZENMETIC!</h2>
+                    <h2>Zenpii!</h2>
                     <h1>${title}</h1>
                     <p>Hi ${name},</p>
-                    <p>Thank you for choosing ZenMetic.</p>
+                    <p>Thank you for choosing Zenpii.</p>
                     <p>${text}</p>
                     <button style="background-color:#0d6efd; border:none; border-radius:4px; padding:0;">
                         <a
