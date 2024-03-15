@@ -87,7 +87,7 @@ const productSchema = new mongoose.Schema(
 
 //validators
 function listImagesLimit(val) {
-  return val.length > 0 && val.length <= 6
+  return val.length > 0 && val.length <= 7
 }
 
 module.exports = mongoose.model('Product', productSchema)
