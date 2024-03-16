@@ -266,6 +266,7 @@ exports.listReviews = (req, res) => {
       .populate('userId', '_id firstName lastName avatar')
       .populate('productId', '_id name listImages isActive isSelling')
       .populate('storeId', '_id name avatar isActive isOpen')
+      .populate('orderId', '_id updatedAt')
       .exec()
       .then((reviews) => {
         return res.json({
