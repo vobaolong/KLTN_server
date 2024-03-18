@@ -48,7 +48,6 @@ exports.createCart = (req, res, next) => {
           error: 'Create cart failed'
         })
       else {
-        //create cart item
         req.cart = cart
         next()
       }
@@ -67,7 +66,6 @@ exports.createCartItem = (req, res, next) => {
     const cartId = req.cartItem.cartId
     CartItem.countDocuments({ cartId }, (error, count) => {
       if (count <= 0) {
-        //remove cart
         req.cartId = cartId
         next()
       } else {
@@ -280,7 +278,6 @@ exports.removeCartItem = (req, res, next) => {
       const cartId = req.cartItem.cartId
       CartItem.countDocuments({ cartId }, (error, count) => {
         if (count <= 0) {
-          //remove cart
           req.cartId = cartId
           next()
         } else {
@@ -334,7 +331,7 @@ exports.countCartItems = (req, res) => {
         $group: {
           _id: '$carts.userId',
           count: {
-            $sum: '$count'
+            $sum: 1
           }
         }
       }
@@ -345,11 +342,8 @@ exports.countCartItems = (req, res) => {
           error: 'Count cart items failed'
         })
 
-      const findedResult = result.find((r) => r._id[0].equals(req.user._id))
-      const count = findedResult ? findedResult.count : 0
-
-      // console.log(result, findedResult);
-
+      const foundResult = result.find((r) => r._id[0].equals(req.user._id))
+      const count = foundResult ? foundResult.count : 0
       return res.status(200).json({
         success: 'Count cart items successfully',
         count

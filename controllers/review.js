@@ -19,7 +19,6 @@ exports.reviewById = (req, res, next, id) => {
 
 exports.checkReview = (req, res) => {
   const { orderId, productId } = req.body
-  console.log(orderId, productId)
   Review.findOne({ userId: req.user._id, orderId, productId })
     .exec()
     .then((review) => {

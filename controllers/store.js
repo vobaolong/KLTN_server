@@ -732,7 +732,6 @@ exports.removeStaff = (req, res, next) => {
 
   let staffIds = req.store.staffIds
   const index = staffIds.indexOf(staff)
-  console.log(index)
   if (index == -1) {
     return res.status(400).json({
       error: 'User is not staff'

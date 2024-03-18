@@ -138,8 +138,6 @@ exports.listOrderByUser = (req, res) => {
         })
       }
 
-      // console.log(result, result.reduce((p, c) => p + c.count, 0), result.map(r => r._id));
-
       const size = result.reduce((p, c) => p + c.count, 0)
       const pageCount = Math.ceil(size / limit)
       filter.pageCount = pageCount
@@ -444,7 +442,6 @@ exports.createOrder = (req, res, next) => {
         error: errorHandler(error)
       })
     } else {
-      //creat order items
       req.order = order
       next()
     }
@@ -455,7 +452,6 @@ exports.createOrderItems = (req, res, next) => {
   CartItem.find({ cartId: req.cart._id })
     .exec()
     .then((items) => {
-      // console.log('before', items);
       const newItems = items.map((item) => {
         return {
           orderId: req.order._id,
@@ -465,7 +461,6 @@ exports.createOrderItems = (req, res, next) => {
           isDeleted: item.isDeleted
         }
       })
-      // console.log('after', newItems);
 
       OrderItem.insertMany(newItems, (error, items) => {
         if (error)
@@ -473,7 +468,6 @@ exports.createOrderItems = (req, res, next) => {
             error: errorHandler(error)
           })
         else {
-          //remove cart
           next()
         }
       })
@@ -497,7 +491,6 @@ exports.removeCart = (req, res, next) => {
         return res.status(400).json({
           error: 'Remove cart failed'
         })
-      //remove all cart items
       else next()
     })
     .catch((error) => {
