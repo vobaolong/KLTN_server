@@ -669,8 +669,8 @@ exports.listProducts = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } },
-      { description: { $regex: regex, $options: 'i' } }
+      { name: { $regex: regex, $options: 'i' } }
+      // { description: { $regex: regex, $options: 'i' } }
     ],
     categoryId: { $in: categoryId },
     isActive: true,
@@ -791,8 +791,8 @@ exports.listProductsByStore = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } },
-      { description: { $regex: regex, $options: 'i' } }
+      { name: { $regex: regex, $options: 'i' } }
+      // { description: { $regex: regex, $options: 'i' } }
     ],
     categoryId: { $in: categoryId },
     isSelling: true,
@@ -899,8 +899,8 @@ exports.listProductsByStoreForManager = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } },
-      { description: { $regex: regex, $options: 'i' } }
+      { name: { $regex: regex, $options: 'i' } }
+      // { description: { $regex: regex, $options: 'i' } }
     ],
     isSelling: { $in: isSelling },
     storeId: req.store._id
@@ -998,7 +998,7 @@ exports.listProductsForAdmin = (req, res) => {
 
   const filterArgs = {
     name: { $regex: regex, $options: 'i' },
-    description: { $regex: regex, $options: 'i' },
+    // description: { $regex: regex, $options: 'i' },
     isActive: { $in: isActive }
   }
 

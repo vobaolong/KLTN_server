@@ -168,8 +168,8 @@ exports.listActiveDeliveries = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } },
-      { description: { $regex: regex, $options: 'i' } }
+      { name: { $regex: regex, $options: 'i' } }
+      // { description: { $regex: regex, $options: 'i' } }
     ],
     isDeleted: false
   }
@@ -248,8 +248,8 @@ exports.listDeliveries = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } },
-      { description: { $regex: regex, $options: 'i' } }
+      { name: { $regex: regex, $options: 'i' } }
+      // { description: { $regex: regex, $options: 'i' } }
     ]
   }
 

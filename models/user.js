@@ -76,7 +76,7 @@ const userSchema = new mongoose.Schema(
           type: String,
           trim: true,
           maxLength: 200,
-          validate: [addressesLimit, 'The limit is 6 addresses']
+          validate: [addressesLimit, 'The limit is 10 addresses']
         }
       ],
       default: []
