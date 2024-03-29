@@ -20,7 +20,7 @@ const categorySchema = new mongoose.Schema(
     image: {
       type: String,
       trim: true,
-      required: true
+      default: '/uploads/default.jpg'
     },
     categoryId: {
       type: ObjectId,

@@ -40,7 +40,6 @@ exports.readTransaction = (req, res) => {
 }
 
 exports.requestTransaction = (req, res, next) => {
-  console.log('Requesting transaction')
   const { isUp, code, amount } = req.body
 
   if (
@@ -64,7 +63,6 @@ exports.requestTransaction = (req, res, next) => {
 }
 
 exports.updateEWallet = (req, res, next) => {
-  console.log('updateEWallet')
   const { userId, storeId, isUp, code, amount } = req.createTransaction
   if ((!userId && !storeId) || typeof isUp !== 'boolean' || !amount)
     return res.status(400).json({

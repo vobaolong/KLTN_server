@@ -557,7 +557,6 @@ exports.listProductCategories = (req, res, next) => {
       }
 
       const categoryId = req.query.categoryId
-      console.log(categoryId, categories)
 
       if (categoryId) {
         const filterCategories = categories.filter((category) =>
@@ -585,8 +584,6 @@ exports.listProductCategories = (req, res, next) => {
                       category.categoryId.categoryId._id == categoryId)
                 )
                 .map((category) => category._id)
-
-              console.log(filterCategories)
 
               req.loadedCategories = filterCategories
               next()

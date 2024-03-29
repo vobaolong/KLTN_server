@@ -628,13 +628,13 @@ exports.addStaffs = (req, res) => {
     (error, count) => {
       if (error) {
         return res.status(404).json({
-          error: 'Users not found'
+          error: 'User not found'
         })
       }
 
       if (count != staffs.length) {
         return res.status(400).json({
-          error: 'Users is invalid'
+          error: 'User is invalid'
         })
       }
 
@@ -670,7 +670,7 @@ exports.addStaffs = (req, res) => {
             staff = cleanUser(staff)
           })
           return res.json({
-            success: 'Add list staffs successfully',
+            success: 'Add staffs successfully',
             store: store
           })
         })

@@ -34,12 +34,12 @@ exports.followProduct = (req, res) => {
           .then((product) => {
             if (!product) {
               return res.status(404).json({
-                error: 'product not found'
+                error: 'Product not found'
               })
             }
 
             return res.json({
-              success: 'Follow product successfully',
+              success: 'Following product',
               product
             })
           })
@@ -64,7 +64,7 @@ exports.unfollowProduct = (req, res) => {
     .then((follow) => {
       if (!follow)
         return res.status(400).json({
-          error: 'Follow is already exists'
+          error: 'Follow is not exists'
         })
       else
         Product.findOne({ _id: productId })
@@ -84,19 +84,19 @@ exports.unfollowProduct = (req, res) => {
           .then((product) => {
             if (!product) {
               return res.status(404).json({
-                error: 'product not found'
+                error: 'Product not found'
               })
             }
 
             return res.json({
-              success: 'Follow product successfully',
+              success: 'Product unFollowed',
               product
             })
           })
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Follow product failed'
+        error: 'UnFollowing product failed'
       })
     })
 }

@@ -6,7 +6,7 @@ exports.categoryById = (req, res, next, id) => {
   Category.findById(id, (error, category) => {
     if (error || !category) {
       return res.status(404).json({
-        error: 'category not found'
+        error: 'Category not found'
       })
     }
 
@@ -57,7 +57,7 @@ exports.checkCategory = (req, res, next) => {
           } catch {}
 
           return res.status(400).json({
-            error: 'categoryId invalid'
+            error: 'CategoryId invalid'
           })
         } else next()
       })
@@ -67,7 +67,7 @@ exports.checkCategory = (req, res, next) => {
         } catch {}
 
         return res.status(400).json({
-          error: 'categoryId invalid'
+          error: 'CategoryId invalid'
         })
       })
   } else next()
@@ -92,7 +92,7 @@ exports.checkCategoryChild = (req, res, next) => {
         } catch (err) {}
 
         return res.status(400).json({
-          error: 'categoryId invalid'
+          error: 'CategoryId invalid'
         })
       }
     })
@@ -117,7 +117,7 @@ exports.checkListCategoriesChild = (req, res, next) => {
 exports.createCategory = (req, res) => {
   const { name, categoryId } = req.fields
   const image = req.filepaths[0]
-  if (!name || !image) {
+  if (!name) {
     try {
       fs.unlinkSync('public' + req.filepaths[0])
     } catch {}

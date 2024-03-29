@@ -25,14 +25,19 @@ const orderRoutes = require('./routes/order')
 const transactionRoutes = require('./routes/transaction')
 const reviewRoutes = require('./routes/review')
 
-//app
 const app = express()
 
-//db
-mongoose.connect(process.env.DATABASE, (error) => {
-  if (error) throw error
-  console.log('DB connected!')
-})
+mongoose
+  .connect(process.env.DATABASE, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log('DB connected!')
+  })
+  .catch((error) => {
+    console.error('Error connecting to database:', error)
+  })
 
 //middlewares
 app.use(morgan('dev'))
@@ -74,7 +79,7 @@ app.use('/api', transactionRoutes)
 app.use('/api', reviewRoutes)
 
 //port
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 5000
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
