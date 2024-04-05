@@ -11,11 +11,11 @@ const orderItemSchema = new mongoose.Schema(
       type: ObjectId,
       ref: 'Product'
     },
-    styleValueIds: {
+    variantValueIds: {
       type: [
         {
           type: ObjectId,
-          ref: 'StyleValue'
+          ref: 'VariantValue'
         }
       ],
       default: []

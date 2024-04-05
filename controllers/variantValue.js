@@ -1,31 +1,31 @@
-const StyleValue = require('../models/styleValue')
+const VariantValue = require('../models/variantValue')
 const { errorHandler } = require('../helpers/errorHandler')
 
-exports.styleValueById = (req, res, next, id) => {
-  StyleValue.findById(id, (error, styleValue) => {
-    if (error || !styleValue) {
+exports.variantValueById = (req, res, next, id) => {
+  VariantValue.findById(id, (error, variantValue) => {
+    if (error || !variantValue) {
       return res.status(404).json({
         error: 'Style value not found'
       })
     }
 
-    req.styleValue = styleValue
+    req.variantValue = variantValue
     next()
   })
 }
 
-exports.createStyleValue = (req, res, next) => {
-  const { name, styleId } = req.body
+exports.createVariantValue = (req, res, next) => {
+  const { name, variantId } = req.body
 
-  if (!name || !styleId)
+  if (!name || !variantId)
     return res.status(400).json({
       error: 'All fields are required'
     })
 
-  const styleValue = new StyleValue({ name, styleId })
+  const variantValue = new VariantValue({ name, variantId })
 
-  styleValue.save((error, styleValue) => {
-    if (error || !styleValue) {
+  variantValue.save((error, variantValue) => {
+    if (error || !variantValue) {
       return res.status(400).json({
         error: errorHandler(error)
       })
@@ -33,12 +33,12 @@ exports.createStyleValue = (req, res, next) => {
 
     return res.json({
       success: 'Create style value successfully',
-      styleValue
+      variantValue
     })
   })
 }
 
-exports.updateStyleValue = (req, res) => {
+exports.updateVariantValue = (req, res) => {
   const { name } = req.body
 
   if (!name)
@@ -46,22 +46,22 @@ exports.updateStyleValue = (req, res) => {
       error: 'All fields are required'
     })
 
-  StyleValue.findOneAndUpdate(
-    { _id: req.styleValue._id },
+  VariantValue.findOneAndUpdate(
+    { _id: req.variantValue._id },
     { $set: { name } },
     { new: true }
   )
     .exec()
-    .then((styleValue) => {
-      if (!styleValue) {
+    .then((variantValue) => {
+      if (!variantValue) {
         return res.status(500).json({
           error: 'style value not found'
         })
       }
 
       return res.json({
-        success: 'Update styleValue successfully',
-        styleValue
+        success: 'Update variantValue successfully',
+        variantValue
       })
     })
     .catch((error) => {
@@ -71,23 +71,23 @@ exports.updateStyleValue = (req, res) => {
     })
 }
 
-exports.removeStyleValue = (req, res) => {
-  StyleValue.findOneAndUpdate(
-    { _id: req.styleValue._id },
+exports.removeVariantValue = (req, res) => {
+  VariantValue.findOneAndUpdate(
+    { _id: req.variantValue._id },
     { $set: { isDeleted: true } },
     { new: true }
   )
     .exec()
-    .then((styleValue) => {
-      if (!styleValue) {
+    .then((variantValue) => {
+      if (!variantValue) {
         return res.status(500).json({
           error: 'style value not found'
         })
       }
 
       return res.json({
-        success: 'Remove styleValue successfully',
-        styleValue
+        success: 'Remove variantValue successfully',
+        variantValue
       })
     })
     .catch((error) => {
@@ -97,15 +97,15 @@ exports.removeStyleValue = (req, res) => {
     })
 }
 
-exports.restoreStyleValue = (req, res) => {
-  StyleValue.findOneAndUpdate(
-    { _id: req.styleValue._id },
+exports.restoreVariantValue = (req, res) => {
+  VariantValue.findOneAndUpdate(
+    { _id: req.variantValue._id },
     { $set: { isDeleted: false } },
     { new: true }
   )
     .exec()
-    .then((styleValue) => {
-      if (!styleValue) {
+    .then((variantValue) => {
+      if (!variantValue) {
         return res.status(500).json({
           error: 'style value not found'
         })
@@ -113,7 +113,7 @@ exports.restoreStyleValue = (req, res) => {
 
       return res.json({
         success: 'Restore style Value successfully',
-        styleValue
+        variantValue
       })
     })
     .catch((error) => {
@@ -123,9 +123,9 @@ exports.restoreStyleValue = (req, res) => {
     })
 }
 
-exports.removeAllStyleValue = (req, res) => {
-  StyleValue.updateMany(
-    { styleId: req.style._id },
+exports.removeAllVariantValue = (req, res) => {
+  VariantValue.updateMany(
+    { variantId: req.style._id },
     { $set: { isDeleted: true } }
   )
     .exec()
@@ -142,9 +142,9 @@ exports.removeAllStyleValue = (req, res) => {
     })
 }
 
-exports.restoreAllStyleValue = (req, res) => {
-  StyleValue.updateMany(
-    { styleId: req.style._id },
+exports.restoreAllVariantValue = (req, res) => {
+  VariantValue.updateMany(
+    { variantId: req.style._id },
     { $set: { isDeleted: false } }
   )
     .exec()
@@ -161,15 +161,15 @@ exports.restoreAllStyleValue = (req, res) => {
     })
 }
 
-exports.listActiveStyleValuesByStyle = (req, res) => {
-  StyleValue.find({ styleId: req.style._id, isDeleted: false })
-    .populate('styleId')
+exports.listActiveVariantValuesByStyle = (req, res) => {
+  VariantValue.find({ variantId: req.style._id, isDeleted: false })
+    .populate('variantId')
     .sort({ name: '1', _id: 1 })
     .exec()
     .then((values) => {
       return res.json({
         success: 'Load list values of style successfully',
-        styleValues: values,
+        variantValues: values,
         style: req.style
       })
     })
@@ -180,15 +180,15 @@ exports.listActiveStyleValuesByStyle = (req, res) => {
     })
 }
 
-exports.listStyleValuesByStyle = (req, res) => {
-  StyleValue.find({ styleId: req.style._id })
-    .populate('styleId')
+exports.listVariantValuesByStyle = (req, res) => {
+  VariantValue.find({ variantId: req.style._id })
+    .populate('variantId')
     .sort({ name: '1', _id: 1 })
     .exec()
     .then((values) => {
       return res.json({
         success: 'Load list values of style successfully',
-        styleValues: values,
+        variantValues: values,
         style: req.style
       })
     })

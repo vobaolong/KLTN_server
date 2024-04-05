@@ -1,21 +1,21 @@
-const Style = require('../models/style')
+const Variant = require('../models/variant')
 const { errorHandler } = require('../helpers/errorHandler')
 
-exports.styleById = (req, res, next, id) => {
-  Style.findById(id, (error, style) => {
-    if (error || !style) {
+exports.variantById = (req, res, next, id) => {
+  Variant.findById(id, (error, variant) => {
+    if (error || !variant) {
       return res.status(404).json({
-        error: 'Style not found'
+        error: 'Variant not found'
       })
     }
 
-    req.style = style
+    req.variant = variant
     next()
   })
 }
 
-exports.getStyle = (req, res) => {
-  Style.findOne({ _id: req.style._id })
+exports.getVariant = (req, res) => {
+  Variant.findOne({ _id: req.variant._id })
     .populate({
       path: 'categoryIds',
       populate: {
@@ -26,35 +26,35 @@ exports.getStyle = (req, res) => {
       }
     })
     .exec()
-    .then((style) => {
-      if (!style)
+    .then((variant) => {
+      if (!variant)
         return res.status(500).json({
-          error: 'Load style failed'
+          error: 'Load variant failed'
         })
 
       return res.json({
-        success: 'Load style successfully',
-        style: style
+        success: 'Load variant successfully',
+        variant: variant
       })
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Load style failed'
+        error: 'Load variant failed'
       })
     })
 }
 
-exports.checkStyle = (req, res, next) => {
+exports.checkVariant = (req, res, next) => {
   const { name, categoryIds } = req.body
-  const styleId = req.style ? req.style._id : null
+  const variantId = req.variant ? req.variant._id : null
 
-  Style.findOne({ _id: { $ne: styleId }, name, categoryIds })
+  Variant.findOne({ _id: { $ne: variantId }, name, categoryIds })
     .exec()
     .then((category) => {
       if (!category) next()
       else
         return res.status(400).json({
-          error: 'Style already exists'
+          error: 'Variant already exists'
         })
     })
     .catch((error) => {
@@ -62,7 +62,7 @@ exports.checkStyle = (req, res, next) => {
     })
 }
 
-exports.createStyle = (req, res) => {
+exports.createVariant = (req, res) => {
   const { name, categoryIds } = req.body
 
   if (!name || !categoryIds)
@@ -70,26 +70,26 @@ exports.createStyle = (req, res) => {
       error: 'All fields are required'
     })
 
-  const style = new Style({
+  const variant = new Variant({
     name,
     categoryIds
   })
 
-  style.save((error, style) => {
-    if (error || !style) {
+  variant.save((error, variant) => {
+    if (error || !variant) {
       return res.status(400).json({
         error: errorHandler(error)
       })
     }
 
     return res.json({
-      success: 'Create style successfully',
-      style
+      success: 'Create variant successfully',
+      variant
     })
   })
 }
 
-exports.updateStyle = (req, res, next) => {
+exports.updateVariant = (req, res, next) => {
   const { name, categoryIds } = req.body
 
   if (!name || !categoryIds)
@@ -97,22 +97,22 @@ exports.updateStyle = (req, res, next) => {
       error: 'All fields are required'
     })
 
-  Style.findOneAndUpdate(
-    { _id: req.style._id },
+  Variant.findOneAndUpdate(
+    { _id: req.variant._id },
     { $set: { name, categoryIds } },
     { new: true }
   )
     .exec()
-    .then((style) => {
-      if (!style) {
+    .then((variant) => {
+      if (!variant) {
         return res.status(500).json({
-          error: 'style not found'
+          error: 'variant not found'
         })
       }
 
       return res.json({
-        success: 'Update style successfully',
-        style
+        success: 'Update variant successfully',
+        variant
       })
     })
     .catch((error) => {
@@ -122,21 +122,21 @@ exports.updateStyle = (req, res, next) => {
     })
 }
 
-exports.removeStyle = (req, res, next) => {
-  Style.findOneAndUpdate(
-    { _id: req.style._id },
+exports.removeVariant = (req, res, next) => {
+  Variant.findOneAndUpdate(
+    { _id: req.variant._id },
     { $set: { isDeleted: true } },
     { new: true }
   )
     .exec()
-    .then((style) => {
-      if (!style) {
+    .then((variant) => {
+      if (!variant) {
         return res.status(500).json({
-          error: 'style not found'
+          error: 'variant not found'
         })
       }
 
-      req.style = style
+      req.variant = variant
       next()
     })
     .catch((error) => {
@@ -146,21 +146,21 @@ exports.removeStyle = (req, res, next) => {
     })
 }
 
-exports.restoreStyle = (req, res, next) => {
-  Style.findOneAndUpdate(
-    { _id: req.style._id },
+exports.restoreVariant = (req, res, next) => {
+  Variant.findOneAndUpdate(
+    { _id: req.variant._id },
     { $set: { isDeleted: false } },
     { new: true }
   )
     .exec()
-    .then((style) => {
-      if (!style) {
+    .then((variant) => {
+      if (!variant) {
         return res.status(500).json({
-          error: 'style not found'
+          error: 'variant not found'
         })
       }
 
-      req.style = style
+      req.variant = variant
       next()
     })
     .catch((error) => {
@@ -170,7 +170,7 @@ exports.restoreStyle = (req, res, next) => {
     })
 }
 
-exports.listActiveStyles = (req, res) => {
+exports.listActiveVariants = (req, res) => {
   const search = req.query.search ? req.query.search : ''
   const regex = search
     .split(' ')
@@ -206,10 +206,10 @@ exports.listActiveStyles = (req, res) => {
     isDeleted: false
   }
 
-  Style.countDocuments(filterArgs, (error, count) => {
+  Variant.countDocuments(filterArgs, (error, count) => {
     if (error) {
       return res.status(404).json({
-        error: 'List active styles not found'
+        error: 'List active variants not found'
       })
     }
 
@@ -223,35 +223,35 @@ exports.listActiveStyles = (req, res) => {
 
     if (count <= 0) {
       return res.json({
-        success: 'Load list active styles successfully',
+        success: 'Load list active variants successfully',
         filter,
         size,
-        styles: []
+        variants: []
       })
     }
 
-    Style.find(filterArgs)
+    Variant.find(filterArgs)
       .sort({ [sortBy]: order, _id: 1 })
       .skip(skip)
       .limit(limit)
       .exec()
-      .then((styles) => {
+      .then((variants) => {
         return res.json({
-          success: 'Load list active styles successfully',
+          success: 'Load list active variants successfully',
           filter,
           size,
-          styles
+          variants
         })
       })
       .catch((error) => {
         return res.status(500).json({
-          error: 'Load list active styles failed'
+          error: 'Load list active variants failed'
         })
       })
   })
 }
 
-exports.listStyles = (req, res) => {
+exports.listVariants = (req, res) => {
   const search = req.query.search ? req.query.search : ''
   const regex = search
     .split(' ')
@@ -287,10 +287,10 @@ exports.listStyles = (req, res) => {
     filterArgs.categoryIds = req.query.categoryId
   }
 
-  Style.countDocuments(filterArgs, (error, count) => {
+  Variant.countDocuments(filterArgs, (error, count) => {
     if (error) {
       return res.status(404).json({
-        error: 'List styles not found'
+        error: 'List variants not found'
       })
     }
 
@@ -304,14 +304,14 @@ exports.listStyles = (req, res) => {
 
     if (count <= 0) {
       return res.json({
-        success: 'Load list styles successfully',
+        success: 'Load list variants successfully',
         filter,
         size,
-        styles: []
+        variants: []
       })
     }
 
-    Style.find(filterArgs)
+    Variant.find(filterArgs)
       .sort({ [sortBy]: order, _id: 1 })
       .populate({
         path: 'categoryIds',
@@ -323,17 +323,17 @@ exports.listStyles = (req, res) => {
       .skip(skip)
       .limit(limit)
       .exec()
-      .then((styles) => {
+      .then((variants) => {
         return res.json({
-          success: 'Load list styles successfully',
+          success: 'Load list variants successfully',
           filter,
           size,
-          styles
+          variants
         })
       })
       .catch((error) => {
         return res.status(500).json({
-          error: 'Load list styles failed'
+          error: 'Load list variants failed'
         })
       })
   })

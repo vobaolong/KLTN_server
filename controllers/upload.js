@@ -26,12 +26,14 @@ exports.upload = (req, res, next) => {
           type !== 'image/png' &&
           type !== 'image/jpg' &&
           type !== 'image/jpeg' &&
+          type !== 'image/webp' &&
           type !== 'image/gif'
         ) {
           // console.log('---UPLOAD IMAGE FAILED---');
           flag = false
           return res.status(400).json({
-            error: 'Invalid type. Photo type must be png, jpg, jpeg or gif.'
+            error:
+              'Invalid type. Photo type must be png, jpg, webp, jpeg or gif.'
           })
         }
 

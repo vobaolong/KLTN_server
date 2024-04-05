@@ -61,11 +61,11 @@ const productSchema = new mongoose.Schema(
       ref: 'Category',
       required: true
     },
-    styleValueIds: {
+    variantValueIds: {
       type: [
         {
           type: ObjectId,
-          ref: 'StyleValue'
+          ref: 'VariantValue'
         }
       ],
       default: []

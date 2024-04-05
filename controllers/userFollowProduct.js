@@ -26,8 +26,8 @@ exports.followProduct = (req, res) => {
             }
           })
           .populate({
-            path: 'styleValueIds',
-            populate: { path: 'styleId' }
+            path: 'variantValueIds',
+            populate: { path: 'variantId' }
           })
           .populate('storeId', '_id name avatar isActive isOpen')
           .exec()
@@ -76,8 +76,8 @@ exports.unfollowProduct = (req, res) => {
             }
           })
           .populate({
-            path: 'styleValueIds',
-            populate: { path: 'styleId' }
+            path: 'variantValueIds',
+            populate: { path: 'variantId' }
           })
           .populate('storeId', '_id name avatar isActive isOpen')
           .exec()
@@ -204,8 +204,8 @@ exports.listFollowingProductsByUser = (req, res) => {
               }
             })
             .populate({
-              path: 'styleValueIds',
-              populate: { path: 'styleId' }
+              path: 'variantValueIds',
+              populate: { path: 'variantId' }
             })
             .populate('storeId', '_id name avatar isActive isOpen')
             .exec()

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { ObjectId } = mongoose.Schema
 
-const styleSchema = new mongoose.Schema(
+const variantSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -27,4 +27,4 @@ const styleSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-module.exports = mongoose.model('Style', styleSchema)
+module.exports = mongoose.model('Variant', variantSchema)

@@ -25,8 +25,8 @@ exports.getProductForManager = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -64,8 +64,8 @@ exports.getProduct = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -96,7 +96,7 @@ exports.createProduct = (req, res) => {
     salePrice,
     quantity,
     categoryId,
-    styleValueIds
+    variantValueIds
   } = req.fields
   const listImages = req.filepaths
   if (
@@ -120,9 +120,9 @@ exports.createProduct = (req, res) => {
     })
   }
 
-  let styleValueIdsArray = []
-  if (styleValueIds) {
-    styleValueIdsArray = styleValueIds.split('|')
+  let variantValueIdsArray = []
+  if (variantValueIds) {
+    variantValueIdsArray = variantValueIds.split('|')
   }
   const product = new Product({
     name,
@@ -131,7 +131,7 @@ exports.createProduct = (req, res) => {
     salePrice,
     quantity,
     categoryId,
-    styleValueIds: styleValueIdsArray,
+    variantValueIds: variantValueIdsArray,
     isActive: req.store.isActive,
     storeId: req.store._id,
     listImages
@@ -165,7 +165,7 @@ exports.updateProduct = (req, res) => {
     salePrice,
     quantity,
     categoryId,
-    styleValueIds
+    variantValueIds
   } = req.fields
 
   if (
@@ -181,9 +181,9 @@ exports.updateProduct = (req, res) => {
     })
   }
 
-  let styleValueIdsArray = []
-  if (styleValueIds) {
-    styleValueIdsArray = styleValueIds.split('|')
+  let variantValueIdsArray = []
+  if (variantValueIds) {
+    variantValueIdsArray = variantValueIds.split('|')
   }
 
   Product.findOneAndUpdate(
@@ -195,7 +195,7 @@ exports.updateProduct = (req, res) => {
       salePrice,
       quantity,
       categoryId,
-      styleValueIds: styleValueIdsArray
+      variantValueIds: variantValueIdsArray
     },
     { new: true }
   )
@@ -207,8 +207,8 @@ exports.updateProduct = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -274,8 +274,8 @@ exports.activeProduct = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -317,8 +317,8 @@ exports.sellingProduct = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -371,8 +371,8 @@ exports.addToListImages = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -439,8 +439,8 @@ exports.updateListImages = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -518,8 +518,8 @@ exports.removeFromListImages = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
     .exec()
@@ -716,8 +716,8 @@ exports.listProducts = (req, res) => {
         }
       })
       .populate({
-        path: 'styleValueIds',
-        populate: { path: 'styleId' }
+        path: 'variantValueIds',
+        populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen')
       .exec()
@@ -839,8 +839,8 @@ exports.listProductsByStore = (req, res) => {
         }
       })
       .populate({
-        path: 'styleValueIds',
-        populate: { path: 'styleId' }
+        path: 'variantValueIds',
+        populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen')
       .exec()
@@ -939,8 +939,8 @@ exports.listProductsByStoreForManager = (req, res) => {
         }
       })
       .populate({
-        path: 'styleValueIds',
-        populate: { path: 'styleId' }
+        path: 'variantValueIds',
+        populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen')
       .exec()
@@ -1035,8 +1035,8 @@ exports.listProductsForAdmin = (req, res) => {
         }
       })
       .populate({
-        path: 'styleValueIds',
-        populate: { path: 'styleId' }
+        path: 'variantValueIds',
+        populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen')
       .exec()

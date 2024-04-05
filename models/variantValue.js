@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { ObjectId } = mongoose.Schema
 
-const styleValueSchema = new mongoose.Schema(
+const variantValueSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -9,7 +9,7 @@ const styleValueSchema = new mongoose.Schema(
       required: true,
       maxLength: 32
     },
-    styleId: {
+    variantId: {
       type: ObjectId,
       ref: 'Style',
       required: true
@@ -22,6 +22,6 @@ const styleValueSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-styleValueSchema.index({ name: 1, styleId: 1 }, { unique: true })
+variantValueSchema.index({ name: 1, variantId: 1 }, { unique: true })
 
-module.exports = mongoose.model('StyleValue', styleValueSchema)
+module.exports = mongoose.model('VariantValue', variantValueSchema)

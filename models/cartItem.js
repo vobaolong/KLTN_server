@@ -13,11 +13,11 @@ const cartItemSchema = new mongoose.Schema(
       ref: 'Product',
       required: true
     },
-    styleValueIds: {
+    variantValueIds: {
       type: [
         {
           type: ObjectId,
-          ref: 'StyleValue'
+          ref: 'VariantValue'
         }
       ],
       default: []

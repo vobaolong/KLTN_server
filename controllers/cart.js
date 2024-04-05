@@ -60,7 +60,7 @@ exports.createCart = (req, res, next) => {
 }
 
 exports.createCartItem = (req, res, next) => {
-  const { productId, styleValueIds, count } = req.body
+  const { productId, variantValueIds, count } = req.body
 
   if (!productId || !count) {
     const cartId = req.cartItem.cartId
@@ -76,13 +76,13 @@ exports.createCartItem = (req, res, next) => {
     })
   }
 
-  let styleValueIdsArray = []
-  if (styleValueIds) {
-    styleValueIdsArray = styleValueIds.split('|')
+  let variantValueIdsArray = []
+  if (variantValueIds) {
+    variantValueIdsArray = variantValueIds.split('|')
   }
 
   CartItem.findOneAndUpdate(
-    { productId, styleValueIds: styleValueIdsArray, cartId: req.cart._id },
+    { productId, variantValueIds: variantValueIdsArray, cartId: req.cart._id },
     { $inc: { count: +count } },
     { upsert: true, new: true }
   )
@@ -107,8 +107,8 @@ exports.createCartItem = (req, res, next) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .exec()
     .then((item) => {
@@ -207,8 +207,8 @@ exports.listItemByCard = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .exec()
     .then((items) => {
@@ -253,8 +253,8 @@ exports.updateCartItem = (req, res) => {
       }
     })
     .populate({
-      path: 'styleValueIds',
-      populate: { path: 'styleId' }
+      path: 'variantValueIds',
+      populate: { path: 'variantId' }
     })
     .exec()
     .then((item) => {
