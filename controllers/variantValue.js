@@ -5,7 +5,7 @@ exports.variantValueById = (req, res, next, id) => {
   VariantValue.findById(id, (error, variantValue) => {
     if (error || !variantValue) {
       return res.status(404).json({
-        error: 'Style value not found'
+        error: 'variant value not found'
       })
     }
 
@@ -32,7 +32,7 @@ exports.createVariantValue = (req, res, next) => {
     }
 
     return res.json({
-      success: 'Create style value successfully',
+      success: 'Create variant value successfully',
       variantValue
     })
   })
@@ -55,7 +55,7 @@ exports.updateVariantValue = (req, res) => {
     .then((variantValue) => {
       if (!variantValue) {
         return res.status(500).json({
-          error: 'style value not found'
+          error: 'variant value not found'
         })
       }
 
@@ -81,7 +81,7 @@ exports.removeVariantValue = (req, res) => {
     .then((variantValue) => {
       if (!variantValue) {
         return res.status(500).json({
-          error: 'style value not found'
+          error: 'variant value not found'
         })
       }
 
@@ -107,12 +107,12 @@ exports.restoreVariantValue = (req, res) => {
     .then((variantValue) => {
       if (!variantValue) {
         return res.status(500).json({
-          error: 'style value not found'
+          error: 'variant value not found'
         })
       }
 
       return res.json({
-        success: 'Restore style Value successfully',
+        success: 'Restore variant Value successfully',
         variantValue
       })
     })
@@ -125,14 +125,14 @@ exports.restoreVariantValue = (req, res) => {
 
 exports.removeAllVariantValue = (req, res) => {
   VariantValue.updateMany(
-    { variantId: req.style._id },
+    { variantId: req.variant._id },
     { $set: { isDeleted: true } }
   )
     .exec()
     .then(() => {
       return res.json({
-        success: 'Remove style & values successfully',
-        style: req.style
+        success: 'Remove variant & values successfully',
+        variant: req.variant
       })
     })
     .catch((error) => {
@@ -144,14 +144,14 @@ exports.removeAllVariantValue = (req, res) => {
 
 exports.restoreAllVariantValue = (req, res) => {
   VariantValue.updateMany(
-    { variantId: req.style._id },
+    { variantId: req.variant._id },
     { $set: { isDeleted: false } }
   )
     .exec()
     .then(() => {
       return res.json({
-        success: 'Restore style & values successfully',
-        style: req.style
+        success: 'Restore variant & values successfully',
+        variant: req.variant
       })
     })
     .catch((error) => {
@@ -161,40 +161,40 @@ exports.restoreAllVariantValue = (req, res) => {
     })
 }
 
-exports.listActiveVariantValuesByStyle = (req, res) => {
-  VariantValue.find({ variantId: req.style._id, isDeleted: false })
+exports.listActiveVariantValuesByVariant = (req, res) => {
+  VariantValue.find({ variantId: req.variant._id, isDeleted: false })
     .populate('variantId')
     .sort({ name: '1', _id: 1 })
     .exec()
     .then((values) => {
       return res.json({
-        success: 'Load list values of style successfully',
+        success: 'Load list values of variant successfully',
         variantValues: values,
-        style: req.style
+        variant: req.variant
       })
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Load list values of style failed'
+        error: 'Load list values of variant failed'
       })
     })
 }
 
-exports.listVariantValuesByStyle = (req, res) => {
-  VariantValue.find({ variantId: req.style._id })
+exports.listVariantValuesByVariant = (req, res) => {
+  VariantValue.find({ variantId: req.variant._id })
     .populate('variantId')
     .sort({ name: '1', _id: 1 })
     .exec()
     .then((values) => {
       return res.json({
-        success: 'Load list values of style successfully',
+        success: 'Load list values of variant successfully',
         variantValues: values,
-        style: req.style
+        variant: req.variant
       })
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Load list values of style failed'
+        error: 'Load list values of variant failed'
       })
     })
 }

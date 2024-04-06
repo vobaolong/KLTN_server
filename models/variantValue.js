@@ -11,7 +11,7 @@ const variantValueSchema = new mongoose.Schema(
     },
     variantId: {
       type: ObjectId,
-      ref: 'Style',
+      ref: 'Variant',
       required: true
     },
     isDeleted: {

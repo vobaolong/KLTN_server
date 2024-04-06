@@ -11,20 +11,20 @@ const {
   updateVariantValue,
   removeVariantValue,
   restoreVariantValue,
-  listActiveVariantValuesByStyle,
-  listVariantValuesByStyle
+  listActiveVariantValuesByVariant,
+  listVariantValuesByVariant
 } = require('../controllers/variantValue')
 
 //routes
 router.get(
   '/active/variant/values/by/variant/:variantId',
-  listActiveVariantValuesByStyle
+  listActiveVariantValuesByVariant
 )
 router.get(
   '/variant/values/by/variant/:variantId/:userId',
   isAuth,
   isAdmin,
-  listVariantValuesByStyle
+  listVariantValuesByVariant
 )
 router.post('/variant/value/create/:userId', isAuth, createVariantValue)
 router.put(

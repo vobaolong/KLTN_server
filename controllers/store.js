@@ -618,7 +618,7 @@ exports.addStaffs = (req, res) => {
   const { staffs } = req.body
   let staffIds = req.store.staffIds
 
-  if (staffs.length > 12 - staffIds.length)
+  if (staffs.length > 6 - staffIds.length)
     return res.status(400).json({
       error: 'The limit is 6 staffs'
     })
