@@ -396,6 +396,8 @@ exports.createOrder = (req, res, next) => {
     commissionId,
     address,
     phone,
+    firstName,
+    lastName,
     amountFromUser,
     amountFromStore,
     amountToStore,
@@ -410,6 +412,8 @@ exports.createOrder = (req, res, next) => {
     !commissionId ||
     !address ||
     !phone ||
+    !firstName ||
+    !lastName ||
     !amountFromUser ||
     !amountFromStore ||
     !amountToStore ||
@@ -431,6 +435,8 @@ exports.createOrder = (req, res, next) => {
     commissionId,
     address,
     phone,
+    firstName,
+    lastName,
     amountFromUser,
     amountFromStore,
     amountToStore,
