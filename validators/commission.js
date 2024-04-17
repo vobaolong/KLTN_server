@@ -14,12 +14,12 @@ const commission = () => [
       "name must contain at least one letter (can contain numbers, some special characters such as _, ', - and space)"
     ),
 
-  check('cost')
+  check('fee')
     .not()
     .isEmpty()
-    .withMessage('Commission cost is required')
+    .withMessage('Commission fee is required')
     .isFloat({ min: 0 })
-    .withMessage('Commission cost must be decimal and greater than zero')
+    .withMessage('Commission fee must be decimal and greater than zero')
 ]
 
 module.exports = {

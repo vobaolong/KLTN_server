@@ -9,7 +9,7 @@ const commissionSchema = new mongoose.Schema(
       unique: true,
       maxLength: 32
     },
-    cost: {
+    fee: {
       type: mongoose.Decimal128,
       required: true,
       min: 0

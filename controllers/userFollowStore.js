@@ -22,7 +22,7 @@ exports.followStore = (req, res) => {
           .select('-e_wallet')
           .populate('ownerId')
           .populate('staffIds')
-          .populate('commissionId', '_id name cost')
+          .populate('commissionId', '_id name fee')
           .exec()
           .then((store) => {
             if (!store)
@@ -63,7 +63,7 @@ exports.unfollowStore = (req, res) => {
           .select('-e_wallet')
           .populate('ownerId')
           .populate('staffIds')
-          .populate('commissionId', '_id name cost')
+          .populate('commissionId', '_id name fee')
           .exec()
           .then((store) => {
             if (!store)
@@ -179,7 +179,7 @@ exports.listFollowingStoresByUser = (req, res) => {
             .limit(limit)
             .populate('ownerId')
             .populate('staffIds')
-            .populate('commissionId', '_id name cost')
+            .populate('commissionId', '_id name fee')
             .exec()
             .then((stores) => {
               const cleanStores = stores.map((store) => cleanStore(store))

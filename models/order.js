@@ -59,7 +59,7 @@ const orderSchema = new mongoose.Schema(
       required: true,
       min: 0
     },
-    amountToGD: {
+    amountToZenpii: {
       type: mongoose.Decimal128,
       required: true,
       min: 0

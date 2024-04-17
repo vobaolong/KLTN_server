@@ -130,6 +130,9 @@ exports.updateRating = (req, res) => {
   Review.aggregate(
     [
       {
+        $match: { rating: { $gt: 0 } }
+      },
+      {
         $group: {
           _id: '$productId',
           rating: {
@@ -145,7 +148,7 @@ exports.updateRating = (req, res) => {
         const temp = result.filter((r) => r._id.equals(productId))[0]
         const rating = temp
           ? (parseFloat(temp.rating) / parseFloat(temp.count)).toFixed(1)
-          : 3
+          : 4
 
         Product.findOneAndUpdate({ _id: productId }, { $set: { rating } })
           .exec()
@@ -177,8 +180,8 @@ exports.updateRating = (req, res) => {
       else {
         const temp = result.filter((r) => r._id.equals(storeId))[0]
         const rating = temp
-          ? (parseFloat(temp.rating) / parseFloat(temp.count)).toFixed()
-          : 3
+          ? (parseFloat(temp.rating) / parseFloat(temp.count)).toFixed(1)
+          : 4
         Store.findOneAndUpdate({ _id: storeId }, { $set: { rating } })
           .exec()
           .then((store) => {

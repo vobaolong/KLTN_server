@@ -333,7 +333,7 @@ exports.listOrderForAdmin = (req, res) => {
         $group: {
           _id: '$_id',
           count: { $sum: 1 },
-          totalAmountToGD: { $sum: { $toDouble: '$amountToGD' } }
+          totalAmountToGD: { $sum: { $toDouble: '$amountToZenpii' } }
         }
       }
     ],
@@ -401,7 +401,7 @@ exports.createOrder = (req, res, next) => {
     amountFromUser,
     amountFromStore,
     amountToStore,
-    amountToGD,
+    amountToZenpii,
     isPaidBefore
   } = req.body
 
@@ -417,7 +417,7 @@ exports.createOrder = (req, res, next) => {
     !amountFromUser ||
     !amountFromStore ||
     !amountToStore ||
-    !amountToGD
+    !amountToZenpii
   )
     return res.status(400).json({
       error: 'All fields are required'
@@ -440,7 +440,7 @@ exports.createOrder = (req, res, next) => {
     amountFromUser,
     amountFromStore,
     amountToStore,
-    amountToGD,
+    amountToZenpii,
     isPaidBefore
   })
 

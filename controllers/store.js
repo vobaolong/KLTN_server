@@ -23,7 +23,7 @@ exports.storeById = (req, res, next, id) => {
 
 exports.getStore = (req, res) => {
   Store.findOne({ _id: req.store._id })
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -50,7 +50,7 @@ exports.getStoreProfile = (req, res) => {
   })
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -130,7 +130,7 @@ exports.updateStore = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -169,7 +169,7 @@ exports.activeStore = (req, res, next) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -229,7 +229,7 @@ exports.updateCommission = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -267,7 +267,7 @@ exports.openStore = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -303,7 +303,7 @@ exports.updateAvatar = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -353,7 +353,7 @@ exports.updateCover = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -425,7 +425,7 @@ exports.addFeatureImage = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -487,7 +487,7 @@ exports.updateFeatureImage = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -553,7 +553,7 @@ exports.removeFeaturedImage = (req, res) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -656,7 +656,7 @@ exports.addStaffs = (req, res) => {
       )
         .populate('ownerId')
         .populate('staffIds')
-        .populate('commissionId', '_id name cost')
+        .populate('commissionId', '_id name fee')
         .exec()
         .then((store) => {
           if (!store) {
@@ -702,7 +702,7 @@ exports.cancelStaff = (req, res, next) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -746,7 +746,7 @@ exports.removeStaff = (req, res, next) => {
   )
     .populate('ownerId')
     .populate('staffIds')
-    .populate('commissionId', '_id name cost')
+    .populate('commissionId', '_id name fee')
     .exec()
     .then((store) => {
       if (!store) {
@@ -862,7 +862,7 @@ exports.listStores = (req, res) => {
       .limit(limit)
       .populate('ownerId')
       .populate('staffIds')
-      .populate('commissionId', '_id name cost')
+      .populate('commissionId', '_id name fee')
       .exec()
       .then((stores) => {
         stores.forEach((store) => {
@@ -968,7 +968,7 @@ exports.listStoresByUser = (req, res) => {
       .limit(limit)
       .populate('ownerId')
       .populate('staffIds')
-      .populate('commissionId', '_id name cost')
+      .populate('commissionId', '_id name fee')
       .exec()
       .then((stores) => {
         stores.forEach((store) => {
@@ -1072,7 +1072,7 @@ exports.listStoresForAdmin = (req, res) => {
       .limit(limit)
       .populate('ownerId')
       .populate('staffIds')
-      .populate('commissionId', '_id name cost')
+      .populate('commissionId', '_id name fee')
       .exec()
       .then((stores) => {
         stores.forEach((store) => {

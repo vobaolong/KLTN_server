@@ -97,9 +97,9 @@ exports.listActiveCommissions = (req, res) => {
 }
 
 exports.createCommission = (req, res) => {
-  const { name, cost, description } = req.body
+  const { name, fee, description } = req.body
 
-  const commission = new Commission({ name, cost, description })
+  const commission = new Commission({ name, fee, description })
   commission.save((error, commission) => {
     if (error || !commission) {
       return res.status(400).json({
@@ -115,11 +115,11 @@ exports.createCommission = (req, res) => {
 
 exports.updateCommission = (req, res) => {
   const commissionId = req.params.commissionId
-  const { name, cost, description } = req.body
+  const { name, fee, description } = req.body
 
   Commission.findOneAndUpdate(
     { _id: commissionId },
-    { $set: { name, cost, description } }
+    { $set: { name, fee, description } }
   )
     .exec()
     .then((commission) => {

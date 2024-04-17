@@ -15,7 +15,7 @@ const {
 
 //routes
 router.get(
-  '/product/number/of/followers/:productId',
+  '/product/numberOfFollowers/:productId',
   getNumberOfFollowersForProduct
 )
 router.get('/follow/product/:productId/:userId', isAuth, followProduct)
