@@ -1,26 +1,23 @@
 const fs = require('fs')
 const formidable = require('formidable')
+const sharp = require('sharp')
 
 exports.upload = (req, res, next) => {
-  // console.log('---UPLOAD IMAGE---');
   let flag = true
   const form = new formidable.IncomingForm()
   form.keepExtensions = true
 
   form.parse(req, (error, fields, files) => {
     if (error) {
-      // console.log('---UPLOAD IMAGE FAILED---');
       return res.status(400).json({
         error: 'Photo could not be up load'
       })
     }
 
     const listFiles = Object.values(files)
-    // console.log('---upload---', fields, listFiles);
     let listFilePaths = []
     if (listFiles.length > 0) {
       listFiles.forEach((file) => {
-        //check type
         const type = file.type
         if (
           type !== 'image/png' &&
@@ -29,7 +26,6 @@ exports.upload = (req, res, next) => {
           type !== 'image/webp' &&
           type !== 'image/gif'
         ) {
-          // console.log('---UPLOAD IMAGE FAILED---');
           flag = false
           return res.status(400).json({
             error:
@@ -37,46 +33,34 @@ exports.upload = (req, res, next) => {
           })
         }
 
-        //check size
         const size = file.size
         if (size > 1000000) {
-          // console.log('---UPLOAD IMAGE FAILED---');
           flag = false
           return res.status(400).json({
             error: 'Image should be less than 1mb in size'
           })
         }
-
-        const path = file.path
-        let data
-        try {
-          data = fs.readFileSync(path)
-        } catch (e) {
-          // console.log('---UPLOAD IMAGE FAILED---');
-          flag = false
-          return res.status(500).json({
-            error: 'Can not read photo file'
-          })
-        }
-
         const newpath =
           'public/uploads/' +
           Date.now() +
-          `${req.store && req.store.slug ? req.store.slug : ''}` +
-          `${req.product && req.product.slug ? req.product.slug : ''}` +
-          file.name
-
+          `${req.store && req.store.slug ? `_${req.store.slug}` : ''}` +
+          `${req.product && req.product.slug ? `_${req.product.slug}` : ''}` +
+          `${
+            req.category && req.category.slug ? `_${req.category.slug}` : ''
+          }` +
+          '.webp'
         try {
-          fs.writeFileSync(newpath, data)
+          sharp(file.path)
+            .webp()
+            .toFile(newpath, (err, info) => {
+              if (err) throw err
+            })
         } catch (e) {
-          // console.log('---UPLOAD IMAGE FAILED---');
           flag = false
           return res.status(500).json({
             error: 'Photo could not be up load'
           })
         }
-
-        // console.log('---UPLOAD IMAGE SUCCESSFULLY---');
         listFilePaths.push(newpath.replace('public', ''))
       })
     }

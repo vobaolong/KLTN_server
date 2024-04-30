@@ -332,8 +332,7 @@ exports.listOrderForAdmin = (req, res) => {
       {
         $group: {
           _id: '$_id',
-          count: { $sum: 1 },
-          totalAmountToGD: { $sum: { $toDouble: '$amountToZenpii' } }
+          count: { $sum: 1 }
         }
       }
     ],
@@ -375,8 +374,7 @@ exports.listOrderForAdmin = (req, res) => {
             success: 'Load list orders successfully',
             filter,
             size,
-            orders,
-            totalAmountToGD: result.reduce((p, c) => p + c.totalAmountToGD, 0)
+            orders
           })
         })
         .catch((error) => {
@@ -726,7 +724,6 @@ exports.updateStatusForAdmin = (req, res, next) => {
         })
 
       if (status === 'Delivered') {
-        //update store e_wallet, product quantity, sold
         req.createTransaction = {
           storeId: order.storeId,
           isUp: true,
@@ -766,8 +763,6 @@ exports.updateQuantitySoldProduct = (req, res, next) => {
           list[index].count += item.count
         }
       })
-
-      // console.log(items, list);
 
       let bulkOps = list.map((element) => {
         return {
@@ -834,9 +829,5 @@ exports.updatePoint = async (req, res) => {
     const { userId, storeId, point } = req.updatePoint
     await User.findOneAndUpdate({ _id: userId }, { $inc: { point: +point } })
     await Store.findOneAndUpdate({ _id: storeId }, { $inc: { point: +point } })
-
-    console.log('---UPDATE POINT SUCCESSFULLY---')
-  } catch {
-    console.log('---UPDATE POINT FAILED---')
-  }
+  } catch {}
 }

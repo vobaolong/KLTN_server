@@ -10,7 +10,7 @@ const categorySchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      maxLength: 32
+      maxLength: 50
     },
     slug: {
       type: String,
@@ -20,7 +20,7 @@ const categorySchema = new mongoose.Schema(
     image: {
       type: String,
       trim: true,
-      default: '/uploads/default.jpg'
+      default: '/uploads/default.webp'
     },
     categoryId: {
       type: ObjectId,

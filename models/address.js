@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-mongoose.plugin(slug)
-
 const addressesSchema = new mongoose.Schema({
   fullName: {
     type: String,

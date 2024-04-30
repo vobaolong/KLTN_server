@@ -279,7 +279,7 @@ exports.updateAvatar = (req, res) => {
         })
       }
 
-      if (oldpath != '/uploads/default.jpg') {
+      if (oldpath != '/uploads/default.webp') {
         try {
           fs.unlinkSync('public' + oldpath)
         } catch {}
@@ -324,7 +324,7 @@ exports.updateCover = (req, res) => {
         })
       }
 
-      if (oldpath != '/uploads/default.jpg') {
+      if (oldpath != '/uploads/default.webp') {
         try {
           fs.unlinkSync('public' + oldpath)
         } catch {}

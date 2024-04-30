@@ -114,7 +114,6 @@ exports.createProduct = (req, res) => {
         fs.unlinkSync('public' + image)
       })
     } catch {}
-
     return res.status(400).json({
       error: 'All fields are required'
     })
@@ -230,9 +229,7 @@ exports.updateProduct = (req, res) => {
     })
 }
 
-/*------
-  ACTIVE
-  ------*/
+// ACTIVE
 exports.activeAllProduct = (req, res) => {
   const { isActive } = req.body
 
@@ -255,9 +252,7 @@ exports.activeAllProduct = (req, res) => {
     })
 }
 
-/*------
-  ACTIVE
-  ------*/
+// ACTIVE
 exports.activeProduct = (req, res) => {
   const { isActive } = req.body
 
@@ -298,9 +293,7 @@ exports.activeProduct = (req, res) => {
     })
 }
 
-/*------
-  SELL OR STORE
-  ------*/
+// hideOrShow
 exports.sellingProduct = (req, res) => {
   const { isSelling } = req.body
 
@@ -341,9 +334,7 @@ exports.sellingProduct = (req, res) => {
     })
 }
 
-/*------
-  LIST IMAGES
-  ------*/
+// listImg
 exports.addToListImages = (req, res) => {
   let listImages = req.product.listImages
 
@@ -455,7 +446,7 @@ exports.updateListImages = (req, res) => {
         })
       }
 
-      if (oldpath != '/uploads/default.jpg') {
+      if (oldpath != '/uploads/default.webp') {
         try {
           fs.unlinkSync('public' + oldpath)
         } catch {}
@@ -542,9 +533,7 @@ exports.removeFromListImages = (req, res) => {
     })
 }
 
-/*------
-  LIST PRODUCTS
-  ------*/
+// LIST PRODUCTS
 exports.listProductCategories = (req, res, next) => {
   Product.distinct(
     'categoryId',

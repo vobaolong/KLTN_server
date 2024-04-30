@@ -83,11 +83,11 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: '/uploads/default.jpg'
+      default: '/uploads/default.webp'
     },
     cover: {
       type: String,
-      default: '/uploads/default.jpg'
+      default: '/uploads/default.webp'
     },
     e_wallet: {
       type: mongoose.Decimal128,

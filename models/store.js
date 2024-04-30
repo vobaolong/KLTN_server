@@ -111,5 +111,15 @@ function nameAvailable(val) {
 
   return flag
 }
+storeSchema.pre('save', function (next) {
+  if (this.isModified('name')) {
+    this.slug = this.generateSlug(this.name)
+  }
+  next()
+})
+
+storeSchema.methods.generateSlug = function (name) {
+  return name.toLowerCase().replace(/\s+/g, '-')
+}
 
 module.exports = mongoose.model('Store', storeSchema)
