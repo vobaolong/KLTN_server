@@ -1,17 +1,6 @@
 const mongoose = require('mongoose')
 
 const addressesSchema = new mongoose.Schema({
-  fullName: {
-    type: String,
-    trim: true,
-    maxLength: 200,
-    validate: [addressesLimit, 'The limit is 10 addresses']
-  },
-  phoneNumber: {
-    type: String,
-    trim: true,
-    required: true
-  },
   address: {
     type: String,
     trim: true,

@@ -629,23 +629,94 @@ exports.updateStatusForUser = (req, res, next) => {
 
 //'Not processed' <--> 'Processing' --> 'Shipped'
 //'Not processed' <--> 'Processing' --> 'Cancelled'
+// exports.updateStatusForStore = (req, res, next) => {
+//   const currentStatus = req.order.status
+//   if (currentStatus !== 'Not processed' && currentStatus !== 'Processing')
+//     return res.status(401).json({
+//       error: 'This order is already processed!'
+//     })
+
+//   const { status } = req.body
+//   if (
+//     status !== 'Not processed' &&
+//     status !== 'Processing' &&
+//     status !== 'Shipped' &&
+//     status !== 'Cancelled'
+//   )
+//     return res.status(400).json({
+//       error: 'This status value is invalid!'
+//     })
+
+//   Order.findOneAndUpdate(
+//     { _id: req.order._id },
+//     { $set: { status } },
+//     { new: true }
+//   )
+//     .populate('userId', '_id firstName lastName avatar')
+//     .populate('storeId', '_id name address avatar isActive isOpen')
+//     .populate('deliveryId')
+//     .populate('commissionId')
+//     .exec()
+//     .then((order) => {
+//       if (!order)
+//         return res.status(500).json({
+//           error: 'Not found!'
+//         })
+
+//       if (order.status === 'Cancelled') {
+//         req.updatePoint = {
+//           userId: req.order.userId,
+//           storeId: req.order.storeId,
+//           point: -1
+//         }
+
+//         if (order.isPaidBefore === true)
+//           req.createTransaction = {
+//             userId: order.userId,
+//             isUp: true,
+//             amount: order.amountFromUser
+//           }
+
+//         next()
+//       }
+
+//       return res.json({
+//         success: 'update order successfully',
+//         order
+//       })
+//     })
+//     .catch((error) => {
+//       return res.status(500).json({
+//         error: 'update order failed'
+//       })
+//     })
+// }
+
 exports.updateStatusForStore = (req, res, next) => {
   const currentStatus = req.order.status
-  if (currentStatus !== 'Not processed' && currentStatus !== 'Processing')
-    return res.status(401).json({
-      error: 'This order is already processed!'
-    })
-
   const { status } = req.body
-  // console.log(status);
+
+  // Check if the new status is valid
   if (
     status !== 'Not processed' &&
     status !== 'Processing' &&
     status !== 'Shipped' &&
+    status !== 'Delivered' &&
     status !== 'Cancelled'
   )
     return res.status(400).json({
       error: 'This status value is invalid!'
+    })
+
+  if (
+    (currentStatus === 'Not processed' && status === 'Delivered') ||
+    (currentStatus === 'Processing' && status === 'Delivered') ||
+    (currentStatus === 'Shipped' && status === 'Not processed') ||
+    (currentStatus === 'Shipped' && status === 'Processing') ||
+    (currentStatus === 'Delivered' && status !== 'Delivered')
+  )
+    return res.status(401).json({
+      error: 'This status update is invalid!'
     })
 
   Order.findOneAndUpdate(
@@ -681,48 +752,6 @@ exports.updateStatusForStore = (req, res, next) => {
         next()
       }
 
-      return res.json({
-        success: 'update order successfully',
-        order
-      })
-    })
-    .catch((error) => {
-      return res.status(500).json({
-        error: 'update order failed'
-      })
-    })
-}
-
-//'Processing' <-- 'Shipped' <--> 'Delivered'
-exports.updateStatusForAdmin = (req, res, next) => {
-  const currentStatus = req.order.status
-  if (currentStatus !== 'Shipped' && currentStatus !== 'Delivered')
-    return res.status(401).json({
-      error: 'This order is not already processed!'
-    })
-
-  const { status } = req.body
-  if (status !== 'Processing' && status !== 'Shipped' && status !== 'Delivered')
-    return res.status(401).json({
-      error: 'This status value is invalid!'
-    })
-
-  Order.findOneAndUpdate(
-    { _id: req.order._id },
-    { $set: { status } },
-    { new: true }
-  )
-    .populate('userId', '_id firstName lastName avatar')
-    .populate('storeId', '_id name address avatar isActive isOpen')
-    .populate('deliveryId')
-    .populate('commissionId')
-    .exec()
-    .then((order) => {
-      if (!order)
-        return res.status(500).json({
-          error: 'Not found!'
-        })
-
       if (status === 'Delivered') {
         req.createTransaction = {
           storeId: order.storeId,
@@ -748,6 +777,62 @@ exports.updateStatusForAdmin = (req, res, next) => {
       })
     })
 }
+
+// //'Processing' <-- 'Shipped' <--> 'Delivered'
+// exports.updateStatusForAdmin = (req, res, next) => {
+//   const currentStatus = req.order.status
+//   if (currentStatus !== 'Shipped' && currentStatus !== 'Delivered')
+//     return res.status(401).json({
+//       error: 'This order is not already processed!'
+//     })
+
+//   const { status } = req.body
+//   if (status !== 'Processing' && status !== 'Shipped' && status !== 'Delivered')
+//     return res.status(401).json({
+//       error: 'This status value is invalid!'
+//     })
+
+//   Order.findOneAndUpdate(
+//     { _id: req.order._id },
+//     { $set: { status } },
+//     { new: true }
+//   )
+//     .populate('userId', '_id firstName lastName avatar')
+//     .populate('storeId', '_id name address avatar isActive isOpen')
+//     .populate('deliveryId')
+//     .populate('commissionId')
+//     .exec()
+//     .then((order) => {
+//       if (!order)
+//         return res.status(500).json({
+//           error: 'Not found!'
+//         })
+
+//       if (status === 'Delivered') {
+//         req.createTransaction = {
+//           storeId: order.storeId,
+//           isUp: true,
+//           amount: order.amountToStore
+//         }
+
+//         req.updatePoint = {
+//           userId: req.order.userId,
+//           storeId: req.order.storeId,
+//           point: 1
+//         }
+//         next()
+//       } else
+//         return res.json({
+//           success: 'update order successfully',
+//           order
+//         })
+//     })
+//     .catch((error) => {
+//       return res.status(500).json({
+//         error: 'update order failed'
+//       })
+//     })
+// }
 
 exports.updateQuantitySoldProduct = (req, res, next) => {
   OrderItem.find({ orderId: req.order._id })

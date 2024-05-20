@@ -1,17 +1,18 @@
-import { Server as SocketIOServer } from 'socket.io'
-import http from 'http'
+const { Server: SocketIOServer } = require('socket.io')
 
-export const initSocketServer = (server) => {
+const initSocketServer = (server) => {
   const io = new SocketIOServer(server)
+
   io.on('connection', (socket) => {
     console.log('A user connected')
-  })
 
-  socket.on('notification', (data) => {
-    io.emit('newNotification', data)
-  })
+    socket.on('notification', (data) => {
+      io.emit('newNotification', data)
+    })
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected')
+    socket.on('disconnect', () => {
+      console.log('A user disconnected')
+    })
   })
 }
+module.exports = { initSocketServer }

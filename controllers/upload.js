@@ -48,6 +48,7 @@ exports.upload = (req, res, next) => {
           `${
             req.category && req.category.slug ? `_${req.category.slug}` : ''
           }` +
+          `${req.user && req.user.slug ? `_${req.user.slug}` : ''}` +
           '.webp'
         try {
           sharp(file.path)
