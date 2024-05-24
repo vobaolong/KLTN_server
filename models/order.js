@@ -13,11 +13,6 @@ const orderSchema = new mongoose.Schema(
       ref: 'Store',
       required: true
     },
-    deliveryId: {
-      type: ObjectId,
-      ref: 'Delivery',
-      required: true
-    },
     commissionId: {
       type: ObjectId,
       ref: 'Commission',

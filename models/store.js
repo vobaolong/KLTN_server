@@ -20,9 +20,9 @@ const storeSchema = new mongoose.Schema(
       unique: true
     },
     address: {
-      type: String,
-      trim: true,
-      maxLength: 200
+      type: ObjectId,
+      ref: 'Address',
+      required: true
     },
     bio: {
       type: String,

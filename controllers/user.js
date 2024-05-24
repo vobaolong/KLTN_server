@@ -518,5 +518,3 @@ exports.listUserForAdmin = (req, res) => {
       })
   })
 }
-
-//active user

@@ -1,23 +1,25 @@
 const mongoose = require('mongoose')
 
-const addressesSchema = new mongoose.Schema({
-  address: {
+const addressSchema = new mongoose.Schema({
+  province: {
     type: String,
-    trim: true,
     required: true
   },
-  addressType: {
+  district: {
     type: String,
-    enum: ['office', 'home'],
     required: true
   },
-  isDefault: {
-    type: Boolean,
-    default: false
+  ward: {
+    type: String,
+    required: true
+  },
+  street: {
+    type: String,
+    required: true
   }
 })
 
-addressesSchema.pre('save', async function (next) {
+addressSchema.pre('save', async function (next) {
   if (this.isDefault) {
     await this.constructor.updateMany(
       { _id: { $ne: this._id } },
@@ -26,7 +28,5 @@ addressesSchema.pre('save', async function (next) {
   }
   next()
 })
-function addressesLimit(val) {
-  return val.length <= 10
-}
-module.exports = mongoose.model('Addresses', addressesSchema)
+
+module.exports = mongoose.model('Address', addressSchema)
