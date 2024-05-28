@@ -1,7 +1,8 @@
-const User = require('../models/user')
-const fs = require('fs')
-const { errorHandler } = require('../helpers/errorHandler')
-const { cleanUser, cleanUserLess } = require('../helpers/userHandler')
+const User = require("../models/user");
+const AddressCache = require("../models/addressCache");
+const fs = require("fs");
+const { errorHandler } = require("../helpers/errorHandler");
+const { cleanUser, cleanUserLess } = require("../helpers/userHandler");
 
 /*------
   USER
@@ -10,21 +11,21 @@ exports.userById = (req, res, next, id) => {
   User.findById(id, (error, user) => {
     if (error || !user) {
       return res.status(404).json({
-        error: 'User not found'
-      })
+        error: "User not found",
+      });
     }
 
-    req.user = user
-    next()
-  })
-}
+    req.user = user;
+    next();
+  });
+};
 
 exports.getUser = (req, res) => {
   return res.json({
-    success: 'Get user successfully',
-    user: cleanUser(req.user)
-  })
-}
+    success: "Get user successfully",
+    user: cleanUser(req.user),
+  });
+};
 
 exports.getUserProfile = (req, res) => {
   User.findOne({ _id: req.user._id })
@@ -32,35 +33,35 @@ exports.getUserProfile = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(404).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
       return res.json({
-        success: 'Get user profile successfully',
-        user: cleanUserLess(user)
-      })
+        success: "Get user profile successfully",
+        user: cleanUserLess(user),
+      });
     })
     .catch((error) => {
       return res.status(404).json({
-        error: 'User not found'
-      })
-    })
-}
+        error: "User not found",
+      });
+    });
+};
 
 exports.updateProfile = (req, res) => {
-  const { firstName, lastName, id_card, email, phone } = req.body
+  const { firstName, lastName, id_card, email, phone } = req.body;
 
   if (email && (req.user.googleId || req.user.facebookId)) {
     return res.status(400).json({
-      error: 'Can not update Google/Facebook email address'
-    })
+      error: "Can not update Google/Facebook email address",
+    });
   }
 
   const isEmailActive =
-    email && req.user.email != email ? false : req.user.isEmailActive
+    email && req.user.email != email ? false : req.user.isEmailActive;
   const isPhoneActive =
-    phone && req.user.phone != phone ? false : req.user.isPhoneActive
+    phone && req.user.phone != phone ? false : req.user.isPhoneActive;
 
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -72,8 +73,8 @@ exports.updateProfile = (req, res) => {
         email,
         phone,
         isEmailActive,
-        isPhoneActive
-      }
+        isPhoneActive,
+      },
     },
     { new: true }
   )
@@ -81,27 +82,27 @@ exports.updateProfile = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(500).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
       return res.json({
-        success: 'Update user successfully.',
-        user: cleanUserLess(user)
-      })
+        success: "Update user successfully.",
+        user: cleanUserLess(user),
+      });
     })
     .catch((error) => {
       return res.status(400).json({
-        error: errorHandler(error)
-      })
-    })
-}
+        error: errorHandler(error),
+      });
+    });
+};
 
 exports.updatePassword = (req, res) => {
-  let { newPassword } = req.body
+  let { newPassword } = req.body;
 
-  const user = req.user
-  newPassword = user.encryptPassword(newPassword, user.salt)
+  const user = req.user;
+  newPassword = user.encryptPassword(newPassword, user.salt);
 
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -111,35 +112,47 @@ exports.updatePassword = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(500).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
       return res.json({
-        success: 'Update new password successfully'
-      })
+        success: "Update new password successfully",
+      });
     })
     .catch((error) => {
       return res.status(400).json({
-        error: errorHandler(error)
-      })
-    })
-}
+        error: errorHandler(error),
+      });
+    });
+};
 
 /*------
   ADDRESS
   ------*/
 exports.addAddress = (req, res) => {
-  let addresses = req.user.addresses
+  let addresses = req.user.addresses;
 
   if (addresses.length >= 10) {
     return res.status(400).json({
-      error: 'The limit is 10 addresses'
-    })
+      error: "The limit is 10 addresses",
+    });
   }
 
-  addresses.push(req.body.address.trim())
-  addresses = [...new Set(addresses)]
+  addresses.push(req.body.address.trim());
+  addresses = [...new Set(addresses)];
+
+  const addressCache = new AddressCache({
+    ...req.body,
+  });
+
+  addressCache.save((error, addressCacheRes) => {
+    if (error || !addressCacheRes) {
+      return res.status(400).json({
+        error: errorHandler(error),
+      });
+    }
+  });
 
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -150,45 +163,45 @@ exports.addAddress = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(500).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
       return res.json({
-        success: 'Add address successfully',
-        user: cleanUserLess(user)
-      })
+        success: "Add address successfully",
+        user: cleanUserLess(user),
+      });
     })
     .catch((error) => {
       return res.status(400).json({
-        error: errorHandler(error)
-      })
-    })
-}
+        error: errorHandler(error),
+      });
+    });
+};
 
 exports.updateAddress = (req, res) => {
   const addressIndex =
     req.query.index && req.query.index >= 0 && req.query.index <= 10
       ? parseInt(req.query.index)
-      : -1
+      : -1;
   if (addressIndex == -1)
     return res.status(400).json({
-      error: 'index not found'
-    })
+      error: "index not found",
+    });
 
-  let addresses = req.user.addresses
+  let addresses = req.user.addresses;
   if (addresses.length <= addressIndex)
     return res.status(404).json({
-      error: 'Address not found'
-    })
+      error: "Address not found",
+    });
 
-  const index = addresses.indexOf(req.body.address.trim())
+  const index = addresses.indexOf(req.body.address.trim());
   if (index != -1 && index != addressIndex)
     return res.status(400).json({
-      error: 'Address already exists'
-    })
+      error: "Address already exists",
+    });
 
-  addresses.splice(addressIndex, 1, req.body.address.trim())
+  addresses.splice(addressIndex, 1, req.body.address.trim());
   User.findOneAndUpdate(
     { _id: req.user._id },
     { $set: { addresses } },
@@ -198,39 +211,39 @@ exports.updateAddress = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(500).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
       return res.json({
-        success: 'Update address successfully',
-        user: cleanUserLess(user)
-      })
+        success: "Update address successfully",
+        user: cleanUserLess(user),
+      });
     })
     .catch((error) => {
       return res.status(400).json({
-        error: errorHandler(error)
-      })
-    })
-}
+        error: errorHandler(error),
+      });
+    });
+};
 
 exports.removeAddress = (req, res) => {
   const addressIndex =
     req.query.index && req.query.index >= 0 && req.query.index <= 10
       ? parseInt(req.query.index)
-      : -1
+      : -1;
   if (addressIndex == -1)
     return res.status(400).json({
-      error: 'index not found'
-    })
+      error: "index not found",
+    });
 
-  let addresses = req.user.addresses
+  let addresses = req.user.addresses;
   if (addresses.length <= addressIndex)
     return res.status(404).json({
-      error: 'Address not found'
-    })
+      error: "Address not found",
+    });
 
-  addresses.splice(addressIndex, 1)
+  addresses.splice(addressIndex, 1);
   User.findOneAndUpdate(
     { _id: req.user._id },
     { $set: { addresses } },
@@ -240,27 +253,27 @@ exports.removeAddress = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(500).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
       return res.json({
-        success: 'Remove address successfully',
-        user: cleanUserLess(user)
-      })
+        success: "Remove address successfully",
+        user: cleanUserLess(user),
+      });
     })
     .catch((error) => {
       return res.status(400).json({
-        error: errorHandler(error)
-      })
-    })
-}
+        error: errorHandler(error),
+      });
+    });
+};
 
 /*------
   AVATAR
   ------*/
 exports.updateAvatar = (req, res) => {
-  const oldpath = req.user.avatar
+  const oldpath = req.user.avatar;
 
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -271,41 +284,41 @@ exports.updateAvatar = (req, res) => {
     .then((user) => {
       if (!user) {
         try {
-          fs.unlinkSync('public' + req.filepaths[0])
+          fs.unlinkSync("public" + req.filepaths[0]);
         } catch {}
 
         return res.status(500).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
-      if (oldpath != '/uploads/default.webp') {
+      if (oldpath != "/uploads/default.webp") {
         try {
-          fs.unlinkSync('public' + oldpath)
+          fs.unlinkSync("public" + oldpath);
         } catch {}
       }
 
       return res.json({
-        success: 'Update avatar successfully',
-        user: cleanUserLess(user)
-      })
+        success: "Update avatar successfully",
+        user: cleanUserLess(user),
+      });
     })
     .catch((error) => {
       try {
-        fs.unlinkSync('public' + req.filepaths[0])
+        fs.unlinkSync("public" + req.filepaths[0]);
       } catch {}
 
       return res.status(400).json({
-        error: errorHandler(error)
-      })
-    })
-}
+        error: errorHandler(error),
+      });
+    });
+};
 
 /*------
   COVER
   ------*/
 exports.updateCover = (req, res) => {
-  const oldpath = req.user.cover
+  const oldpath = req.user.cover;
 
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -316,96 +329,96 @@ exports.updateCover = (req, res) => {
     .then((user) => {
       if (!user) {
         try {
-          fs.unlinkSync('public' + req.filepaths[0])
+          fs.unlinkSync("public" + req.filepaths[0]);
         } catch {}
 
         return res.status(500).json({
-          error: 'User not found'
-        })
+          error: "User not found",
+        });
       }
 
-      if (oldpath != '/uploads/default.webp') {
+      if (oldpath != "/uploads/default.webp") {
         try {
-          fs.unlinkSync('public' + oldpath)
+          fs.unlinkSync("public" + oldpath);
         } catch {}
       }
 
       return res.json({
-        success: 'Update cover successfully',
-        user: cleanUserLess(user)
-      })
+        success: "Update cover successfully",
+        user: cleanUserLess(user),
+      });
     })
     .catch((error) => {
       try {
-        fs.unlinkSync('public' + req.filepaths[0])
+        fs.unlinkSync("public" + req.filepaths[0]);
       } catch {}
 
       return res.status(400).json({
-        error: errorHandler(error)
-      })
-    })
-}
+        error: errorHandler(error),
+      });
+    });
+};
 
 /*------
   LIST USERS
   ------*/
 // users?search=...&sortBy=...&order=...&limit=...&page=...
 exports.listUser = (req, res) => {
-  const search = req.query.search ? req.query.search : ''
+  const search = req.query.search ? req.query.search : "";
   const regex = search
-    .split(' ')
+    .split(" ")
     .filter((w) => w)
-    .join('|')
-  const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
+    .join("|");
+  const sortBy = req.query.sortBy ? req.query.sortBy : "_id";
   const order =
-    req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
+    req.query.order && (req.query.order == "asc" || req.query.order == "desc")
       ? req.query.order
-      : 'asc' //desc
+      : "asc"; //desc
 
   const limit =
-    req.query.limit && req.query.limit > 0 ? parseInt(req.query.limit) : 6
+    req.query.limit && req.query.limit > 0 ? parseInt(req.query.limit) : 6;
   const page =
-    req.query.page && req.query.page > 0 ? parseInt(req.query.page) : 1
-  let skip = (page - 1) * limit
+    req.query.page && req.query.page > 0 ? parseInt(req.query.page) : 1;
+  let skip = (page - 1) * limit;
 
   const filter = {
     search,
     sortBy,
     order,
     limit,
-    pageCurrent: page
-  }
+    pageCurrent: page,
+  };
 
   const filterArgs = {
     $or: [
-      { firstName: { $regex: regex, $options: 'i' } },
-      { lastName: { $regex: regex, $options: 'i' } }
+      { firstName: { $regex: regex, $options: "i" } },
+      { lastName: { $regex: regex, $options: "i" } },
     ],
-    role: { $ne: 'admin' }
-  }
+    role: { $ne: "admin" },
+  };
 
   User.countDocuments(filterArgs, (error, count) => {
     if (error) {
       return res.status(404).json({
-        error: 'Users not found'
-      })
+        error: "Users not found",
+      });
     }
 
-    const size = count
-    const pageCount = Math.ceil(size / limit)
-    filter.pageCount = pageCount
+    const size = count;
+    const pageCount = Math.ceil(size / limit);
+    filter.pageCount = pageCount;
 
     if (page > pageCount) {
-      skip = (pageCount - 1) * limit
+      skip = (pageCount - 1) * limit;
     }
 
     if (count <= 0) {
       return res.json({
-        success: 'Load list users successfully',
+        success: "Load list users successfully",
         filter,
         size,
-        users: []
-      })
+        users: [],
+      });
     }
 
     User.find(filterArgs)
@@ -415,83 +428,83 @@ exports.listUser = (req, res) => {
       .exec()
       .then((users) => {
         users.forEach((user) => {
-          user = cleanUser(user)
-        })
+          user = cleanUser(user);
+        });
 
         return res.json({
-          success: 'Load list users successfully',
+          success: "Load list users successfully",
           filter,
           size,
-          users
-        })
+          users,
+        });
       })
       .catch((error) => {
         return res.status(500).json({
-          error: 'Load list users failed'
-        })
-      })
-  })
-}
+          error: "Load list users failed",
+        });
+      });
+  });
+};
 
 // list users for admin management
 exports.listUserForAdmin = (req, res) => {
-  const search = req.query.search ? req.query.search : ''
+  const search = req.query.search ? req.query.search : "";
   const regex = search
-    .split(' ')
+    .split(" ")
     .filter((w) => w)
-    .join('|')
-  const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
+    .join("|");
+  const sortBy = req.query.sortBy ? req.query.sortBy : "_id";
 
   const order =
-    req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
+    req.query.order && (req.query.order == "asc" || req.query.order == "desc")
       ? req.query.order
-      : 'asc' //desc
+      : "asc"; //desc
   const limit =
-    req.query.limit && req.query.limit > 0 ? parseInt(req.query.limit) : 6
+    req.query.limit && req.query.limit > 0 ? parseInt(req.query.limit) : 6;
   const page =
-    req.query.page && req.query.page > 0 ? parseInt(req.query.page) : 1
-  let skip = (page - 1) * limit
+    req.query.page && req.query.page > 0 ? parseInt(req.query.page) : 1;
+  let skip = (page - 1) * limit;
 
   const filter = {
     search,
     sortBy,
     order,
     limit,
-    pageCurrent: page
-  }
+    pageCurrent: page,
+  };
 
   const filterArgs = {
     $or: [
-      { firstName: { $regex: regex, $options: 'i' } },
-      { lastName: { $regex: regex, $options: 'i' } },
-      { email: { $regex: regex, $options: 'i' } },
-      { phone: { $regex: regex, $options: 'i' } }
+      { firstName: { $regex: regex, $options: "i" } },
+      { lastName: { $regex: regex, $options: "i" } },
+      { email: { $regex: regex, $options: "i" } },
+      { phone: { $regex: regex, $options: "i" } },
     ],
-    role: { $ne: 'admin' }
-  }
+    role: { $ne: "admin" },
+  };
 
   User.countDocuments(filterArgs, (error, count) => {
     if (error) {
       return res.status(404).json({
-        error: 'Users not found'
-      })
+        error: "Users not found",
+      });
     }
 
-    const size = count
-    const pageCount = Math.ceil(size / limit)
-    filter.pageCount = pageCount
+    const size = count;
+    const pageCount = Math.ceil(size / limit);
+    filter.pageCount = pageCount;
 
     if (page > pageCount) {
-      skip = (pageCount - 1) * limit
+      skip = (pageCount - 1) * limit;
     }
 
     if (count <= 0) {
       return res.json({
-        success: 'Load list users successfully',
+        success: "Load list users successfully",
         filter,
         size,
-        users: []
-      })
+        users: [],
+      });
     }
 
     User.find(filterArgs)
@@ -501,20 +514,20 @@ exports.listUserForAdmin = (req, res) => {
       .exec()
       .then((users) => {
         users.forEach((user) => {
-          user = cleanUserLess(user)
-        })
+          user = cleanUserLess(user);
+        });
 
         return res.json({
-          success: 'Load list users successfully',
+          success: "Load list users successfully",
           filter,
           size,
-          users
-        })
+          users,
+        });
       })
       .catch((error) => {
         return res.status(500).json({
-          error: 'Load list users failed'
-        })
-      })
-  })
-}
+          error: "Load list users failed",
+        });
+      });
+  });
+};
