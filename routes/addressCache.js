@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { getAddressCache } = require("../controllers/addressCache");
+const {
+  getAddressCache,
+  getProvinces,
+} = require("../controllers/addressCache");
 
 router.get("/cacheAddress/:address", getAddressCache);
+router.get("/getProvinces", getProvinces);
 
 module.exports = router;

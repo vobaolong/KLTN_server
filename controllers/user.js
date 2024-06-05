@@ -141,7 +141,6 @@ exports.addAddress = (req, res) => {
 
   addresses.push(req.body.address.trim());
   addresses = [...new Set(addresses)];
-
   const addressCache = new AddressCache({
     ...req.body,
   });
@@ -179,7 +178,7 @@ exports.addAddress = (req, res) => {
     });
 };
 
-exports.updateAddress = (req, res) => {
+exports.updateAddress = async (req, res) => {
   const addressIndex =
     req.query.index && req.query.index >= 0 && req.query.index <= 10
       ? parseInt(req.query.index)
@@ -200,6 +199,31 @@ exports.updateAddress = (req, res) => {
     return res.status(400).json({
       error: "Address already exists",
     });
+
+  const addressDetail = req.body.addressDetail;
+
+  if (addressDetail._id) {
+    await AddressCache.findByIdAndUpdate(addressDetail._id, {
+      provinceID: addressDetail.province,
+      provinceName: addressDetail.provinceName,
+      districtID: addressDetail.district,
+      districtName: addressDetail.districtName,
+      wardID: addressDetail.ward,
+      wardName: addressDetail.wardName,
+      address: addressDetail.street,
+    });
+  } else {
+    const newAddressCache = new AddressCache({
+      provinceID: addressDetail.province,
+      provinceName: addressDetail.provinceName,
+      districtID: addressDetail.district,
+      districtName: addressDetail.districtName,
+      wardID: addressDetail.ward,
+      wardName: addressDetail.wardName,
+      address: addressDetail.street,
+    });
+    await newAddressCache.save();
+  }
 
   addresses.splice(addressIndex, 1, req.body.address.trim());
   User.findOneAndUpdate(
