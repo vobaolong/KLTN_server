@@ -391,6 +391,7 @@ exports.createOrder = (req, res, next) => {
     address,
     phone,
     firstName,
+    shippingFee,
     lastName,
     amountFromUser,
     amountFromStore,
@@ -404,6 +405,7 @@ exports.createOrder = (req, res, next) => {
     !storeId ||
     !commissionId ||
     !address ||
+    !shippingFee ||
     !phone ||
     !firstName ||
     !lastName ||
@@ -424,11 +426,12 @@ exports.createOrder = (req, res, next) => {
   const order = new Order({
     userId,
     storeId,
-    commissionId,
-    address,
-    phone,
     firstName,
     lastName,
+    phone,
+    address,
+    shippingFee,
+    commissionId,
     amountFromUser,
     amountFromStore,
     amountToStore,
@@ -623,7 +626,6 @@ exports.updateStatusForStore = (req, res, next) => {
   const currentStatus = req.order.status
   const { status } = req.body
 
-  // Check if the new status is valid
   if (
     status !== 'Not processed' &&
     status !== 'Processing' &&
@@ -784,5 +786,8 @@ exports.updatePoint = async (req, res) => {
     const { userId, storeId, point } = req.updatePoint
     await User.findOneAndUpdate({ _id: userId }, { $inc: { point: +point } })
     await Store.findOneAndUpdate({ _id: storeId }, { $inc: { point: +point } })
-  } catch {}
+    return res.json(200).json({ success: 'update successfully' })
+  } catch (error) {
+    return res.status(500).json(error)
+  }
 }

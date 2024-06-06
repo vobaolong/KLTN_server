@@ -81,10 +81,6 @@ const userSchema = new mongoose.Schema(
       ],
       default: []
     },
-    // addresses: {
-    //   type: [{ type: ObjectId, ref: 'Address' }],
-    //   required: true
-    // },
     avatar: {
       type: String,
       default: '/uploads/default.webp'

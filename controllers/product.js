@@ -641,6 +641,8 @@ exports.listProducts = (req, res) => {
       ? parseInt(req.query.maxPrice)
       : -1
 
+  const provinces = req.query.provinces
+
   const filter = {
     search,
     sortBy,
@@ -708,9 +710,28 @@ exports.listProducts = (req, res) => {
         path: 'variantValueIds',
         populate: { path: 'variantId' }
       })
-      .populate('storeId', '_id name avatar isActive isOpen')
+      .populate('storeId', '_id name avatar isActive isOpen address')
       .exec()
       .then((products) => {
+        if (provinces) {
+          const newProducts = products.filter((pr) => {
+            for (let i = 0; i < provinces.length; i++) {
+              if (pr.storeId.address.includes(provinces[i])) return true
+            }
+            return false
+          })
+
+          const size1 = newProducts.length
+          const pageCount1 = Math.ceil(size1 / limit)
+          filter.pageCount = pageCount1
+
+          return res.json({
+            success: 'Load list products successfully',
+            filter,
+            size,
+            products: newProducts
+          })
+        }
         return res.json({
           success: 'Load list products successfully',
           filter,

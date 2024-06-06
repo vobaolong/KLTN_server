@@ -1,5 +1,6 @@
 const Store = require('../models/store')
 const User = require('../models/user')
+const AddressCache = require('../models/addressCache')
 const fs = require('fs')
 const { errorHandler } = require('../helpers/errorHandler')
 const { cleanUser, cleanUserLess } = require('../helpers/userHandler')
@@ -76,8 +77,8 @@ exports.getStoreProfile = (req, res) => {
     })
 }
 
-exports.createStore = (req, res) => {
-  const { name, bio, address, commissionId } = req.fields
+exports.createStore = async (req, res) => {
+  const { name, bio, address, commissionId, addressDetail } = req.fields
   const avatar = req.filepaths[0]
   const cover = req.filepaths[1]
 
@@ -92,6 +93,26 @@ exports.createStore = (req, res) => {
     })
   }
 
+  const {
+    province,
+    provinceName,
+    district,
+    districtName,
+    ward,
+    wardName,
+    street
+  } = JSON.parse(addressDetail)
+
+  const addressCache = new AddressCache({
+    provinceID: province,
+    provinceName: provinceName,
+    districtID: district,
+    districtName: districtName,
+    wardID: ward,
+    wardName: wardName,
+    address: street
+  })
+
   const store = new Store({
     name,
     bio,
@@ -101,6 +122,9 @@ exports.createStore = (req, res) => {
     cover,
     ownerId: req.user._id
   })
+
+  await addressCache.save()
+
   store.save((error, store) => {
     if (error || !store) {
       try {
@@ -120,8 +144,31 @@ exports.createStore = (req, res) => {
   })
 }
 
-exports.updateStore = (req, res) => {
-  const { name, bio, address } = req.body
+exports.updateStore = async (req, res) => {
+  const { name, bio, address, addressDetail } = req.body
+
+  if (addressDetail._id) {
+    await AddressCache.findByIdAndUpdate(addressDetail._id, {
+      provinceID: addressDetail.province,
+      provinceName: addressDetail.provinceName,
+      districtID: addressDetail.distinct,
+      districtName: addressDetail.districtName,
+      wardID: addressDetail.wardID,
+      wardName: addressDetail.wardName,
+      address: addressDetail.street
+    })
+  } else {
+    const addressCache = new AddressCache({
+      provinceID: addressDetail.province,
+      provinceName: addressDetail.provinceName,
+      districtID: addressDetail.district,
+      districtName: addressDetail.districtName,
+      wardID: addressDetail.ward,
+      wardName: addressDetail.wardName,
+      address: addressDetail.street
+    })
+    await addressCache.save()
+  }
 
   Store.findOneAndUpdate(
     { _id: req.store._id },

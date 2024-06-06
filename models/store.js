@@ -20,8 +20,8 @@ const storeSchema = new mongoose.Schema(
       unique: true
     },
     address: {
-      type: ObjectId,
-      ref: 'Address',
+      type: String,
+      trim: true,
       required: true
     },
     bio: {

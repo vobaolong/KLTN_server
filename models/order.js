@@ -39,6 +39,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    shippingFee: {
+      type: mongoose.Decimal128,
+      required: true
+    },
     amountFromUser: {
       type: mongoose.Decimal128,
       required: true,
