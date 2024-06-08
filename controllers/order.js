@@ -531,28 +531,27 @@ exports.checkOrderAuth = (req, res, next) => {
     })
 }
 
-exports.readOrder = (req, res) => {
-  Order.findOne({ _id: req.order._id })
-    .populate('userId', '_id firstName lastName avatar')
-    .populate('storeId', '_id name address avatar isActive isOpen')
-    .populate('commissionId')
-    .exec()
-    .then((order) => {
-      if (!order)
-        return res.status(500).json({
-          error: 'Not found!'
-        })
+exports.readOrder = async (req, res) => {
+  try {
+    const order = await Order.findOne({ _id: req.order._id })
+      .populate('userId', '_id firstName lastName avatar')
+      .populate('storeId', '_id name address avatar isActive isOpen')
+      .populate('commissionId')
 
-      return res.json({
-        success: 'read order successfully',
-        order
-      })
-    })
-    .catch((error) => {
-      return res.status(500).json({
+    if (!order)
+      return res.status(501).json({
         error: 'Not found!'
       })
+
+    return res.json({
+      success: 'read order successfully',
+      order
     })
+  } catch (error) {
+    return res.status(500).json({
+      error: 'Not found!'
+    })
+  }
 }
 
 // 'Not processed' --> 'Cancelled' (in 1h)
@@ -636,7 +635,6 @@ exports.updateStatusForStore = (req, res, next) => {
     return res.status(400).json({
       error: 'This status value is invalid!'
     })
-
   if (
     (currentStatus === 'Not processed' && status === 'Delivered') ||
     (currentStatus === 'Processing' && status === 'Delivered') ||
@@ -663,7 +661,7 @@ exports.updateStatusForStore = (req, res, next) => {
           error: 'Not found!'
         })
 
-      if (order.status === 'Cancelled') {
+      if (status === 'Cancelled') {
         req.updatePoint = {
           userId: req.order.userId,
           storeId: req.order.storeId,
@@ -678,9 +676,7 @@ exports.updateStatusForStore = (req, res, next) => {
           }
 
         next()
-      }
-
-      if (status === 'Delivered') {
+      } else if (status === 'Delivered') {
         req.createTransaction = {
           storeId: order.storeId,
           isUp: true,
@@ -693,11 +689,12 @@ exports.updateStatusForStore = (req, res, next) => {
           point: 1
         }
         next()
-      } else
+      } else {
         return res.json({
           success: 'update order successfully',
           order
         })
+      }
     })
     .catch((error) => {
       return res.status(500).json({
@@ -786,8 +783,9 @@ exports.updatePoint = async (req, res) => {
     const { userId, storeId, point } = req.updatePoint
     await User.findOneAndUpdate({ _id: userId }, { $inc: { point: +point } })
     await Store.findOneAndUpdate({ _id: storeId }, { $inc: { point: +point } })
-    return res.json(200).json({ success: 'update successfully' })
-  } catch (error) {
-    return res.status(500).json(error)
+
+    console.log('Update point successfully')
+  } catch {
+    console.log('Update point failed')
   }
 }

@@ -153,11 +153,11 @@ exports.updateRating = (req, res) => {
         Product.findOneAndUpdate({ _id: productId }, { $set: { rating } })
           .exec()
           .then((product) => {
-            if (!product) console.log('---UPDATE PRODUCT RATING FAILED---')
-            else console.log('---UPDATE PRODUCT RATING SUCCESSFULLY---', rating)
+            if (!product) console.log('Update product rating failed')
+            else console.log('Update product rating successfully', rating)
           })
           .catch((error) => {
-            console.log('---UPDATE PRODUCT RATING FAILED---')
+            console.log('Update product rating failed')
           })
       }
     }
@@ -185,11 +185,11 @@ exports.updateRating = (req, res) => {
         Store.findOneAndUpdate({ _id: storeId }, { $set: { rating } })
           .exec()
           .then((store) => {
-            if (!store) console.log('---UPDATE STORE RATING FAILED---')
-            else console.log('---UPDATE STORE RATING SUCCESSFULLY---', rating)
+            if (!store) console.log('Update product rating successfully')
+            else console.log('Update store rating successfully', rating)
           })
           .catch((error) => {
-            console.log('---UPDATE STORE RATING FAILED---')
+            console.log('Update product rating successfully')
           })
       }
     }

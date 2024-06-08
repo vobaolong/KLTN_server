@@ -73,6 +73,7 @@ exports.createCartItem = (req, res, next) => {
           error: 'All fields are required'
         })
       }
+      return
     })
   }
 
@@ -342,7 +343,9 @@ exports.countCartItems = (req, res) => {
           error: 'Count cart items failed'
         })
 
-      const foundResult = result.find((r) => r._id[0].equals(req.user._id))
+      const foundResult = result.find(
+        (r) => r._id && r._id[0] && r._id[0].equals(req.user._id)
+      )
       const count = foundResult ? foundResult.count : 0
       return res.status(200).json({
         success: 'Count cart items successfully',

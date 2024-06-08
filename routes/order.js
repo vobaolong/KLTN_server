@@ -99,18 +99,19 @@ router.put(
   updateStatusForStore,
   updateEWallet,
   createTransaction,
-  updatePoint
-)
-router.put(
-  '/order/update/for/admin/:orderId/:userId',
-  isAuth,
-  isAdmin,
-  checkOrderAuth,
-  updateEWallet,
-  createTransaction,
   updateQuantitySoldProduct,
   updatePoint
 )
+// router.put(
+//   '/order/update/for/admin/:orderId/:userId',
+//   isAuth,
+//   isAdmin,
+//   checkOrderAuth,
+//   updateEWallet,
+//   createTransaction,
+//   updateQuantitySoldProduct,
+//   updatePoint
+// )
 
 //params
 router.param('orderId', orderById)

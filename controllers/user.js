@@ -4,9 +4,7 @@ const fs = require('fs')
 const { errorHandler } = require('../helpers/errorHandler')
 const { cleanUser, cleanUserLess } = require('../helpers/userHandler')
 
-/*------
-  USER
-  ------*/
+// USER
 exports.userById = (req, res, next, id) => {
   User.findById(id, (error, user) => {
     if (error || !user) {
@@ -127,9 +125,7 @@ exports.updatePassword = (req, res) => {
     })
 }
 
-/*------
-  ADDRESS
-  ------*/
+// ADDRESS
 exports.addAddress = (req, res) => {
   let addresses = req.user.addresses
 
@@ -141,7 +137,6 @@ exports.addAddress = (req, res) => {
 
   addresses.push(req.body.address.trim())
   addresses = [...new Set(addresses)]
-
   const addressCache = new AddressCache({
     ...req.body
   })
@@ -294,9 +289,7 @@ exports.removeAddress = (req, res) => {
     })
 }
 
-/*------
-  AVATAR
-  ------*/
+// AVATAR
 exports.updateAvatar = (req, res) => {
   const oldpath = req.user.avatar
 
@@ -339,9 +332,7 @@ exports.updateAvatar = (req, res) => {
     })
 }
 
-/*------
-  COVER
-  ------*/
+// COVER
 exports.updateCover = (req, res) => {
   const oldpath = req.user.cover
 
@@ -384,10 +375,7 @@ exports.updateCover = (req, res) => {
     })
 }
 
-/*------
-  LIST USERS
-  ------*/
-// users?search=...&sortBy=...&order=...&limit=...&page=...
+// LIST USERS
 exports.listUser = (req, res) => {
   const search = req.query.search ? req.query.search : ''
   const regex = search
