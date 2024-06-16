@@ -24,7 +24,7 @@ exports.errorHandler = (error) => {
         message = uniqueMessage(error)
         break
       default:
-        message = 'Something went wrong'
+        message = 'Some thing went wrong'
     }
   } else {
     message = error.message
