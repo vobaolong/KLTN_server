@@ -104,12 +104,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       sparse: true
     },
-    facebookId: {
-      type: String,
-      trim: true,
-      unique: true,
-      sparse: true
-    },
     isActive: {
       type: Boolean,
       default: true

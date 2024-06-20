@@ -172,11 +172,6 @@ exports.restoreVariant = (req, res, next) => {
 
 exports.listActiveVariants = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -201,7 +196,7 @@ exports.listActiveVariants = (req, res) => {
   }
 
   const filterArgs = {
-    name: { $regex: regex, $options: 'i' },
+    name: { $regex: search, $options: 'i' },
     categoryIds: categoryId,
     isDeleted: false
   }
@@ -253,11 +248,6 @@ exports.listActiveVariants = (req, res) => {
 
 exports.listVariants = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -279,7 +269,7 @@ exports.listVariants = (req, res) => {
   }
 
   const filterArgs = {
-    name: { $regex: regex, $options: 'i' }
+    name: { $regex: search, $options: 'i' }
   }
 
   if (req.query.categoryId) {

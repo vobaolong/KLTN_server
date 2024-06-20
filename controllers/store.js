@@ -837,11 +837,6 @@ exports.listStoreCommissions = (req, res, next) => {
 //?search=...&sortBy=...&order=...&limit=...&commissionId=&page=...
 exports.listStores = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const sortMoreBy = req.query.sortMoreBy ? req.query.sortMoreBy : '_id'
   const order =
@@ -871,8 +866,13 @@ exports.listStores = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } },
-      { bio: { $regex: regex, $options: 'i' } }
+      {
+        name: {
+          $regex: search,
+          $options: 'i'
+        }
+      },
+      { bio: { $regex: search, $options: 'i' } }
     ],
     isActive: true,
     commissionId: { $in: commissionId }
@@ -936,10 +936,6 @@ exports.listStores = (req, res) => {
 
 exports.listStoresByUser = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
 
   let isActive = [true, false]
   if (req.query.isActive == 'true') isActive = [true]
@@ -975,10 +971,34 @@ exports.listStoresByUser = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' }, ownerId: req.user._id },
-      { name: { $regex: regex, $options: 'i' }, staffIds: req.user._id },
-      { bio: { $regex: regex, $options: 'i' }, ownerId: req.user._id },
-      { bio: { $regex: regex, $options: 'i' }, staffIds: req.user._id }
+      {
+        name: {
+          $regex: search,
+          $options: 'i'
+        },
+        ownerId: req.user._id
+      },
+      {
+        name: {
+          $regex: search,
+          $options: 'i'
+        },
+        staffIds: req.user._id
+      },
+      {
+        bio: {
+          $regex: search,
+          $options: 'i'
+        },
+        ownerId: req.user._id
+      },
+      {
+        bio: {
+          $regex: search,
+          $options: 'i'
+        },
+        staffIds: req.user._id
+      }
     ],
     isActive: { $in: isActive },
     commissionId: { $in: commissionId }
@@ -1042,10 +1062,6 @@ exports.listStoresByUser = (req, res) => {
 
 exports.listStoresForAdmin = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
 
   let isActive = [true, false]
   if (req.query.isActive == 'true') isActive = [true]
@@ -1081,8 +1097,15 @@ exports.listStoresForAdmin = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } },
-      { bio: { $regex: regex, $options: 'i' } }
+      {
+        name: {
+          $regex: search,
+          $options: 'i'
+        }
+      },
+      {
+        bio: { $regex: search, $options: 'i' }
+      }
     ],
     isActive: { $in: isActive },
     commissionId: { $in: commissionId }

@@ -50,9 +50,9 @@ exports.getUserProfile = (req, res) => {
 exports.updateProfile = (req, res) => {
   const { firstName, lastName, id_card, email, phone } = req.body
 
-  if (email && (req.user.googleId || req.user.facebookId)) {
+  if (email && req.user.googleId) {
     return res.status(400).json({
-      error: 'Can not update Google/Facebook email address'
+      error: 'Can not update Google email address'
     })
   }
 
@@ -378,10 +378,7 @@ exports.updateCover = (req, res) => {
 // LIST USERS
 exports.listUser = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
+
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -404,8 +401,18 @@ exports.listUser = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { firstName: { $regex: regex, $options: 'i' } },
-      { lastName: { $regex: regex, $options: 'i' } }
+      {
+        firstName: {
+          $regex: search,
+          $options: 'i'
+        }
+      },
+      {
+        lastName: {
+          $regex: search,
+          $options: 'i'
+        }
+      }
     ],
     role: { $ne: 'admin' }
   }
@@ -462,10 +469,6 @@ exports.listUser = (req, res) => {
 // list users for admin management
 exports.listUserForAdmin = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
 
   const order =
@@ -488,10 +491,30 @@ exports.listUserForAdmin = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { firstName: { $regex: regex, $options: 'i' } },
-      { lastName: { $regex: regex, $options: 'i' } },
-      { email: { $regex: regex, $options: 'i' } },
-      { phone: { $regex: regex, $options: 'i' } }
+      {
+        firstName: {
+          $regex: search,
+          $options: 'i'
+        }
+      },
+      {
+        lastName: {
+          $regex: search,
+          $options: 'i'
+        }
+      },
+      {
+        email: {
+          $regex: search,
+          $options: 'i'
+        }
+      },
+      {
+        phone: {
+          $regex: search,
+          $options: 'i'
+        }
+      }
     ],
     role: { $ne: 'admin' }
   }

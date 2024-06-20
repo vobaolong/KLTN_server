@@ -268,11 +268,6 @@ exports.restoreCategory = (req, res) => {
 
 exports.listActiveCategories = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -294,7 +289,10 @@ exports.listActiveCategories = (req, res) => {
   }
 
   const filterArgs = {
-    name: { $regex: regex, $options: 'i' },
+    name: {
+      $regex: search,
+      $options: 'i'
+    },
     isDeleted: false
   }
 
@@ -355,11 +353,6 @@ exports.listActiveCategories = (req, res) => {
 
 exports.listCategories = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -381,7 +374,10 @@ exports.listCategories = (req, res) => {
   }
 
   const filterArgs = {
-    name: { $regex: regex, $options: 'i' }
+    name: {
+      $regex: search,
+      $options: 'i'
+    }
   }
 
   if (req.query.categoryId) {

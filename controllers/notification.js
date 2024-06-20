@@ -19,7 +19,7 @@ exports.notificationOrder = async (orderId, from, to) => {
     })
 
     await Promise.all([buyerNotification.save(), sellerNotification.save()])
-
+    console.log('Send notification create successfully order')
     return [true, store.ownerId.toString()]
   } catch (error) {
     console.error('Error in notificationOrder:', error)
@@ -68,26 +68,6 @@ exports.notificationDelivered = async (orderId, from, to) => {
     return [true, '']
   } catch (error) {
     console.error('Error in notificationDelivered:', error)
-    return [false, '']
-  }
-}
-
-exports.notificationLowStock = async (orderId, from, to) => {
-  try {
-    const store = await Store.findById(to)
-
-    const sellerNotification = new Notification({
-      message: `Sản phẩm sắp hết`,
-      userId: store.ownerId.toString(),
-      isRead: false,
-      orderId: orderId
-    })
-
-    await sellerNotification.save()
-
-    return [true, store.ownerId.toString()]
-  } catch (error) {
-    console.error('Error in notificationLowStock:', error)
     return [false, '']
   }
 }

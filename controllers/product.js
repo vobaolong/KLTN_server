@@ -609,11 +609,6 @@ exports.listProductCategoriesByStore = (req, res, next) => {
 
 exports.listProducts = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -657,8 +652,13 @@ exports.listProducts = (req, res) => {
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } }
-      // { description: { $regex: regex, $options: 'i' } }
+      {
+        name: {
+          $regex: search,
+          $options: 'i'
+        }
+      }
+      // { description: { $regex: search, $options: 'i' } }
     ],
     categoryId: { $in: categoryId },
     isActive: true,
@@ -749,11 +749,6 @@ exports.listProducts = (req, res) => {
 
 exports.listProductsByStore = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -783,6 +778,8 @@ exports.listProductsByStore = (req, res) => {
       ? parseInt(req.query.maxPrice)
       : -1
 
+  const quantity = req.query.quantity === '0' ? 0 : -1
+
   const filter = {
     search,
     sortBy,
@@ -793,13 +790,19 @@ exports.listProductsByStore = (req, res) => {
     rating: rating !== -1 ? rating : 'all',
     minPrice: minPrice !== -1 ? minPrice : 0,
     maxPrice: maxPrice !== -1 ? maxPrice : 'infinite',
-    storeId: req.store._id
+    storeId: req.store._id,
+    quantity: quantity !== -1 ? quantity : 'all'
   }
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } }
-      // { description: { $regex: regex, $options: 'i' } }
+      {
+        name: {
+          $regex: search,
+          $options: 'i'
+        }
+      }
+      // { description: { $regex: search, $options: 'i' } }
     ],
     categoryId: { $in: categoryId },
     isSelling: true,
@@ -870,14 +873,8 @@ exports.listProductsByStore = (req, res) => {
   })
 }
 
-//for manager
 exports.listProductsByStoreForManager = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -894,6 +891,8 @@ exports.listProductsByStoreForManager = (req, res) => {
   if (req.query.isSelling == 'true') isSelling = [true]
   if (req.query.isSelling == 'false') isSelling = [false]
 
+  const quantity = req.query.quantity === '0' ? 0 : -1
+
   const filter = {
     search,
     sortBy,
@@ -901,17 +900,25 @@ exports.listProductsByStoreForManager = (req, res) => {
     isSelling,
     limit,
     pageCurrent: page,
-    storeId: req.store._id
+    storeId: req.store._id,
+    quantity: quantity !== -1 ? quantity : 'all'
   }
 
   const filterArgs = {
     $or: [
-      { name: { $regex: regex, $options: 'i' } }
-      // { description: { $regex: regex, $options: 'i' } }
+      {
+        name: {
+          $regex: search,
+          $options: 'i'
+        }
+      }
+      // { description: { $regex: search, $options: 'i' } }
     ],
     isSelling: { $in: isSelling },
     storeId: req.store._id
   }
+
+  if (quantity === 0) filterArgs.quantity = quantity
 
   Product.countDocuments(filterArgs, (error, count) => {
     if (error) {
@@ -973,11 +980,6 @@ exports.listProductsByStoreForManager = (req, res) => {
 //for admin
 exports.listProductsForAdmin = (req, res) => {
   const search = req.query.search ? req.query.search : ''
-  const regex = search
-    .split(' ')
-    .filter((w) => w)
-    .join('|')
-
   const sortBy = req.query.sortBy ? req.query.sortBy : '_id'
   const order =
     req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
@@ -1004,8 +1006,8 @@ exports.listProductsForAdmin = (req, res) => {
   }
 
   const filterArgs = {
-    name: { $regex: regex, $options: 'i' },
-    // description: { $regex: regex, $options: 'i' },
+    name: { $regex: search, $options: 'i' },
+    // description: { $regex: search, $options: 'i' },
     isActive: { $in: isActive }
   }
 

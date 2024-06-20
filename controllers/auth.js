@@ -26,13 +26,11 @@ exports.signin = (req, res, next) => {
     $or: [
       {
         email: { $exists: true, $ne: null, $eq: email },
-        googleId: { $exists: false, $eq: null },
-        facebookId: { $exists: false, $eq: null }
+        googleId: { $exists: false, $eq: null }
       },
       {
         phone: { $exists: true, $ne: null, $eq: phone },
-        googleId: { $exists: false, $eq: null },
-        facebookId: { $exists: false, $eq: null }
+        googleId: { $exists: false, $eq: null }
       }
     ]
   })
@@ -258,18 +256,15 @@ exports.changePassword = (req, res) => {
 }
 
 exports.authSocial = (req, res, next) => {
-  const { googleId, facebookId } = req.body
+  const { googleId } = req.body
 
-  if (!googleId && !facebookId)
+  if (!googleId)
     return res.status(400).json({
-      error: 'googleId or facebookId is required'
+      error: 'googleId is required'
     })
 
   User.findOne({
-    $or: [
-      { googleId: { $exists: true, $ne: null, $eq: googleId } },
-      { facebookId: { $exists: true, $ne: null, $eq: facebookId } }
-    ]
+    $or: [{ googleId: { $exists: true, $ne: null, $eq: googleId } }]
   })
     .exec()
     .then((user) => {
@@ -282,7 +277,7 @@ exports.authSocial = (req, res, next) => {
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Signing in with Google/Facebook failed'
+        error: 'Signing in with Google failed'
       })
     })
 }
@@ -290,11 +285,11 @@ exports.authSocial = (req, res, next) => {
 exports.authUpdate = (req, res, next) => {
   if (req.auth) next()
   else {
-    const { firstName, lastName, email, googleId, facebookId } = req.body
+    const { firstName, lastName, email, googleId } = req.body
 
     if (googleId) {
       User.findOneAndUpdate(
-        { email, facebookId: { $exists: true, $ne: null } },
+        { email: { $exists: true, $ne: null } },
         { $set: { googleId } },
         { new: true }
       )
@@ -306,43 +301,6 @@ exports.authUpdate = (req, res, next) => {
               lastName,
               email,
               googleId,
-              facebookId,
-              isEmailActive: true
-            })
-            newUser.save((error, u) => {
-              if (error) {
-                return res.status(400).json({
-                  error: errorHandler(error)
-                })
-              }
-              req.auth = u
-              next()
-            })
-          } else {
-            req.auth = user
-            next()
-          }
-        })
-        .catch((error) => {
-          next()
-        })
-    }
-
-    if (facebookId) {
-      User.findOneAndUpdate(
-        { email, googleId: { $exists: true, $ne: null } },
-        { $set: { facebookId } },
-        { new: true }
-      )
-        .exec()
-        .then((user) => {
-          if (!user) {
-            const newUser = new User({
-              firstName,
-              lastName,
-              email,
-              googleId,
-              facebookId,
               isEmailActive: true
             })
             newUser.save((error, u) => {

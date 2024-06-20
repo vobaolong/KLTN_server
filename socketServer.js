@@ -34,14 +34,6 @@ const initSocketServer = (server) => {
       }
     })
 
-    socket.on('notificationLowStock', async ({ orderId, from, to }) => {
-      const [success, storeId] = await notificationLowStock(orderId, from, to)
-      if (success) {
-        io.to(from).emit('notification', from)
-        io.to(storeId).emit('notification', storeId)
-      }
-    })
-
     socket.on('join', (userId) => {
       socket.join(userId)
     })

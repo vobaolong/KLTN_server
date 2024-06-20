@@ -34,7 +34,6 @@ exports.orderItemById = (req, res, next, id) => {
   })
 }
 
-//list
 exports.listOrderItems = (req, res) => {
   OrderItem.find({ orderId: req.order._id })
     .populate({
@@ -637,6 +636,8 @@ exports.updateStatusForStore = (req, res, next) => {
     })
   if (
     (currentStatus === 'Not processed' && status === 'Delivered') ||
+    (currentStatus === 'Not processed' && status === 'Shipped') ||
+    (currentStatus === 'Processing' && status === 'Not processed') ||
     (currentStatus === 'Processing' && status === 'Delivered') ||
     (currentStatus === 'Shipped' && status === 'Not processed') ||
     (currentStatus === 'Shipped' && status === 'Processing') ||
@@ -677,16 +678,19 @@ exports.updateStatusForStore = (req, res, next) => {
 
         next()
       } else if (status === 'Delivered') {
-        req.createTransaction = {
-          storeId: order.storeId,
-          isUp: true,
-          amount: order.amountToStore
-        }
-
         req.updatePoint = {
           userId: req.order.userId,
           storeId: req.order.storeId,
           point: 1
+        }
+
+        req.createTransaction = {
+          storeId: order.storeId,
+          isUp: order.isPaidBefore === true ? true : false,
+          amount:
+            order.isPaidBefore === true
+              ? order.amountToStore
+              : order.amountToZenpii
         }
         next()
       } else {
@@ -738,7 +742,7 @@ exports.updateQuantitySoldProduct = (req, res, next) => {
             error: 'Could not update product'
           })
         }
-
+        console.log('Update product successfully')
         return res.json({
           success: 'Order successfully, update product successfully',
           order: req.order
@@ -778,7 +782,7 @@ exports.countOrders = (req, res) => {
   })
 }
 
-exports.updatePoint = async (req, res) => {
+exports.updatePoint = async (req, res, next) => {
   try {
     const { userId, storeId, point } = req.updatePoint
     await User.findOneAndUpdate({ _id: userId }, { $inc: { point: +point } })
