@@ -50,10 +50,15 @@ exports.getProductForManager = (req, res) => {
 }
 
 exports.getProduct = (req, res) => {
-  if (!req.product.isActive || !req.product.isSelling)
+  if (!req.product.isActive) {
     return res.status(404).json({
-      error: 'Active/Selling Product not found'
+      error: 'Sản phẩm đang tạm thời bị khoá'
     })
+  } else if (!req.product.isSelling) {
+    return res.status(404).json({
+      error: 'Sản phẩm đang tạm thời bị ẩn'
+    })
+  }
 
   Product.findOne({ _id: req.product._id, isSelling: true, isActive: true })
     .populate({
@@ -891,6 +896,10 @@ exports.listProductsByStoreForManager = (req, res) => {
   if (req.query.isSelling == 'true') isSelling = [true]
   if (req.query.isSelling == 'false') isSelling = [false]
 
+  let isActive = [true, false]
+  if (req.query.isActive == 'true') isActive = [true]
+  if (req.query.isActive == 'false') isActive = [false]
+
   const quantity = req.query.quantity === '0' ? 0 : -1
 
   const filter = {
@@ -898,6 +907,7 @@ exports.listProductsByStoreForManager = (req, res) => {
     sortBy,
     order,
     isSelling,
+    isActive,
     limit,
     pageCurrent: page,
     storeId: req.store._id,
@@ -915,6 +925,7 @@ exports.listProductsByStoreForManager = (req, res) => {
       // { description: { $regex: search, $options: 'i' } }
     ],
     isSelling: { $in: isSelling },
+    isActive: { $in: isActive },
     storeId: req.store._id
   }
 

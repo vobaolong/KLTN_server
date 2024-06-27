@@ -1,11 +1,8 @@
 const express = require('express')
 const router = express.Router()
-
-//import validators
 const storeValidator = require('../validators/store')
 const { validateHandler } = require('../helpers/validateHandler')
 
-//import controllers
 const { isAuth, isAdmin, isManager, isOwner } = require('../controllers/auth')
 const { userById } = require('../controllers/user')
 const { upload } = require('../controllers/upload')
@@ -24,9 +21,9 @@ const {
   addFeatureImage,
   updateFeatureImage,
   removeFeaturedImage,
-  addStaffs,
+  addStaff,
   cancelStaff,
-  listStaffs,
+  listStaff,
   removeStaff,
   listStoreCommissions,
   listStores,
@@ -36,21 +33,24 @@ const {
 } = require('../controllers/store')
 const { activeAllProduct } = require('../controllers/product')
 
-//routes
 router.get('/store/:storeId', getStore)
+
 router.get(
   '/store/profile/:storeId/:userId',
   isAuth,
   isManager,
   getStoreProfile
 )
+
 router.get('/stores', listStoreCommissions, listStores)
+
 router.get(
   '/stores/by/user/:userId',
   isAuth,
   listStoreCommissions,
   listStoresByUser
 )
+
 router.get(
   '/stores/for/admin/:userId',
   isAuth,
@@ -58,7 +58,9 @@ router.get(
   listStoreCommissions,
   listStoresForAdmin
 )
+
 router.post('/store/create/:userId', isAuth, upload, createStore)
+
 router.put(
   '/store/:storeId/:userId',
   isAuth,
@@ -79,6 +81,7 @@ router.put(
 )
 
 router.get('/store/commission/:storeId', getCommission)
+
 router.put(
   '/store/commission/:storeId/:userId',
   isAuth,
@@ -97,7 +100,6 @@ router.put(
   openStore
 )
 
-// router.get('/store/avatar/:storeId', getAvatar);
 router.put(
   '/store/avatar/:storeId/:userId',
   isAuth,
@@ -106,7 +108,6 @@ router.put(
   updateAvatar
 )
 
-// router.get('/store/cover/:storeId', getCover);
 router.put(
   '/store/cover/:storeId/:userId',
   isAuth,
@@ -116,6 +117,7 @@ router.put(
 )
 
 router.get('/store/featured/images/:storeId', listFeatureImages)
+
 router.post(
   '/store/featured/image/:storeId/:userId',
   isAuth,
@@ -123,6 +125,7 @@ router.post(
   upload,
   addFeatureImage
 )
+
 router.put(
   '/store/featured/image/:storeId/:userId',
   isAuth,
@@ -130,6 +133,7 @@ router.put(
   upload,
   updateFeatureImage
 )
+
 router.delete(
   '/store/featured/image/:storeId/:userId',
   isAuth,
@@ -137,16 +141,17 @@ router.delete(
   removeFeaturedImage
 )
 
-// router.get('/store/owner/:storeId', getOwner);
+router.get('/store/staff/:storeId/:userId', isAuth, isManager, listStaff)
 
-router.get('/store/staffs/:storeId/:userId', isAuth, isManager, listStaffs)
-router.post('/store/staffs/:storeId/:userId', isAuth, isOwner, addStaffs)
+router.post('/store/staff/:storeId/:userId', isAuth, isOwner, addStaff)
+
 router.delete(
   '/store/staff/remove/:storeId/:userId',
   isAuth,
   isOwner,
   removeStaff
 )
+
 router.delete(
   '/store/staff/cancel/:storeId/:userId',
   isAuth,
@@ -156,6 +161,7 @@ router.delete(
 
 //router params
 router.param('userId', userById)
+
 router.param('storeId', storeById)
 
 module.exports = router

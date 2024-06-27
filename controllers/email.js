@@ -2,6 +2,7 @@ const User = require('../models/user')
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
 const { errorHandler } = require('../helpers/errorHandler')
+const { formatDate } = require('../helpers/formatDate')
 
 const transport = nodemailer.createTransport({
   service: 'gmail',
@@ -54,7 +55,6 @@ exports.sendChangePasswordEmail = (req, res, next) => {
   }
 }
 
-// Allow less secure apps to access account
 exports.sendConfirmationEmail = (req, res) => {
   console.log('Send confirmed email')
   if (req.user.email) {
@@ -76,6 +76,7 @@ exports.sendConfirmationEmail = (req, res) => {
     )
       .exec()
       .then((user) => {
+        console.log(user)
         if (!user) {
           return res.status(500).json({
             error: 'User not found'
@@ -134,6 +135,89 @@ exports.sendConfirmationEmail = (req, res) => {
       error: 'No email provided'
     })
   }
+}
+
+exports.sendActiveStoreEmail = async (req, res) => {
+  console.log('Send active store email')
+  const user = await User.findById({ _id: req.params.userId })
+  const time = formatDate(Date.now())
+  const title = 'THÔNG BÁO MỞ KHOÁ TÀI KHOẢN GIAN HÀNG'
+  const text = `Chúng tôi xin trân trọng thông báo rằng cửa hàng của quý khách sẽ mở khóa trở lại vào lúc ${time}.<br/>Chúng tôi rất xin lỗi vì sự bất tiện mà việc đóng cửa đã gây ra và chân thành cảm ơn sự kiên nhẫn và sự ủng hộ của quý khách hàng trong thời gian qua.<br/>Mong rằng sau quá trình mở khóa, chúng tôi sẽ tiếp tục nhận được sự ủng hộ và hợp tác từ phía quý khách hàng. Mọi thắc mắc hoặc yêu cầu hỗ trợ, vui lòng liên hệ với chúng tôi qua email bên dưới.`
+  if (!user) {
+    return res.status(400).json({ error: 'User information is missing' })
+  }
+  const name = user.firstName + ' ' + user.lastName
+  const email = user.email
+  transport
+    .sendMail({
+      from: process.env.ADMIN_EMAIL,
+      to: email,
+      subject: `Zenpii E-commerce - ${title}`,
+      html: `<div>
+          <h2>Zenpii!</h2>
+          <h1>${title}</h1>
+          <p>Xin chào, ${name},</p>
+          <p>Cảm ơn bạn đã lựa chọn Zenpii.</p>
+          <p>${text}</p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ hỗ trợ khách hàng</p>
+          <p>Email: <a href="mailto:support@gmail.com">support@gmail.com</a></p>
+        </div>`
+    })
+    .then(() => {
+      console.log('Send email successfully')
+      return res.json({
+        success: 'Send email successfully'
+      })
+    })
+    .catch((error) => {
+      console.log('Send email failed', error)
+      return res.status(500).json({
+        error: 'Send email failed'
+      })
+    })
+}
+
+exports.sendBanStoreEmail = async (req, res) => {
+  console.log('Send ban store email')
+  const user = await User.findById({ _id: req.params.userId })
+  const time = formatDate(Date.now())
+  const title = 'THÔNG BÁO KHOÁ TÀI KHOẢN GIAN HÀNG'
+  const text = `Chúng tôi xin thông báo rằng tài khoản shop của bạn đã bị khoá vào lúc ${time} do vi phạm các quy định và điều khoản sử dụng của chúng tôi. <br/> Vui lòng liên hệ với chúng tôi để biết thêm thông tin chi tiết và hướng dẫn để khôi phục tài khoản của bạn.`
+  if (!user) {
+    return res.status(400).json({ error: 'User information is missing' })
+  }
+  const name = user.firstName + ' ' + user.lastName
+  const email = user.email
+  transport
+    .sendMail({
+      from: process.env.ADMIN_EMAIL,
+      to: email,
+      subject: `Zenpii E-commerce - ${title}`,
+      html: `<div>
+          <h2>Zenpii!</h2>
+          <h1>${title}</h1>
+          <p>Xin chào, ${name},</p>
+          <p>Cảm ơn bạn đã lựa chọn Zenpii.</p>
+          <p>${text}</p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ hỗ trợ khách hàng</p>
+          <p>Email: <a href="mailto:support@gmail.com">support@gmail.com</a></p>
+
+        </div>`
+    })
+    .then(() => {
+      console.log('Send email successfully')
+      return res.json({
+        success: 'Send email successfully'
+      })
+    })
+    .catch((error) => {
+      console.log('Send email failed', error)
+      return res.status(500).json({
+        error: 'Send email failed'
+      })
+    })
 }
 
 exports.verifyEmail = (req, res) => {

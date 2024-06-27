@@ -333,7 +333,9 @@ exports.verifyPassword = (req, res, next) => {
         error: 'User not found'
       })
     }
-
+    if (user.googleId) {
+      return next() // Bỏ qua bước xác thực mật khẩu
+    }
     if (!user.authenticate(currentPassword)) {
       return res.status(401).json({
         error: "Current password doesn't match"

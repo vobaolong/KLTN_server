@@ -42,7 +42,7 @@ const storeSchema = new mongoose.Schema(
           ref: 'User'
         }
       ],
-      validate: [staffIdsLimit, 'The limit is 6 staffs'],
+      validate: [staffIdsLimit, 'The limit is 6 staff'],
       default: []
     },
     isActive: {

@@ -628,7 +628,7 @@ exports.removeFeaturedImage = (req, res) => {
 /*------
   STAFFS
   ------*/
-exports.listStaffs = (req, res) => {
+exports.listStaff = (req, res) => {
   Store.findOne({ _id: req.store._id })
     .select('staffIds')
     .populate(
@@ -650,84 +650,81 @@ exports.listStaffs = (req, res) => {
       })
 
       return res.json({
-        success: 'Load list staffs successfully',
-        staffs: store.staffIds
+        success: 'Load list staff successfully',
+        staff: store.staffIds
       })
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Load list staffs failed'
+        error: 'Load list staff failed'
       })
     })
 }
 
-exports.addStaffs = (req, res) => {
-  const { staffs } = req.body
+exports.addStaff = (req, res) => {
+  const { staff } = req.body
   let staffIds = req.store.staffIds
 
-  if (staffs.length > 6 - staffIds.length)
+  if (staff.length > 6 - staffIds.length)
     return res.status(400).json({
-      error: 'The limit is 6 staffs'
+      error: 'The limit is 6 staff'
     })
 
-  User.countDocuments(
-    { _id: { $in: staffs }, role: 'user' },
-    (error, count) => {
-      if (error) {
-        return res.status(404).json({
-          error: 'User not found'
-        })
-      }
-
-      if (count != staffs.length) {
-        return res.status(400).json({
-          error: 'User is invalid'
-        })
-      }
-
-      for (let i = 0; i < staffs.length; i++) {
-        let flag = false
-        for (let j = 0; j < staffIds.length; j++) {
-          if (staffs[i] == staffIds[j]) {
-            flag = true
-            break
-          }
-        }
-        if (!flag) staffIds.push(staffs[i])
-      }
-
-      Store.findOneAndUpdate(
-        { _id: req.store._id },
-        { $set: { staffIds: staffIds } },
-        { new: true }
-      )
-        .populate('ownerId')
-        .populate('staffIds')
-        .populate('commissionId', '_id name fee')
-        .exec()
-        .then((store) => {
-          if (!store) {
-            return res.status(500).json({
-              error: 'Store not found'
-            })
-          }
-
-          store.ownerId = cleanUser(store.ownerId)
-          store.staffIds.forEach((staff) => {
-            staff = cleanUser(staff)
-          })
-          return res.json({
-            success: 'Add staffs successfully',
-            store: store
-          })
-        })
-        .catch((error) => {
-          return res.status(400).json({
-            error: errorHandler(error)
-          })
-        })
+  User.countDocuments({ _id: { $in: staff }, role: 'user' }, (error, count) => {
+    if (error) {
+      return res.status(404).json({
+        error: 'User not found'
+      })
     }
-  )
+
+    if (count != staff.length) {
+      return res.status(400).json({
+        error: 'User is invalid'
+      })
+    }
+
+    for (let i = 0; i < staff.length; i++) {
+      let flag = false
+      for (let j = 0; j < staffIds.length; j++) {
+        if (staff[i] == staffIds[j]) {
+          flag = true
+          break
+        }
+      }
+      if (!flag) staffIds.push(staff[i])
+    }
+
+    Store.findOneAndUpdate(
+      { _id: req.store._id },
+      { $set: { staffIds: staffIds } },
+      { new: true }
+    )
+      .populate('ownerId')
+      .populate('staffIds')
+      .populate('commissionId', '_id name fee')
+      .exec()
+      .then((store) => {
+        if (!store) {
+          return res.status(500).json({
+            error: 'Store not found'
+          })
+        }
+
+        store.ownerId = cleanUser(store.ownerId)
+        store.staffIds.forEach((staff) => {
+          staff = cleanUser(staff)
+        })
+        return res.json({
+          success: 'Add staff successfully',
+          store: store
+        })
+      })
+      .catch((error) => {
+        return res.status(400).json({
+          error: errorHandler(error)
+        })
+      })
+  })
 }
 
 exports.cancelStaff = (req, res, next) => {
