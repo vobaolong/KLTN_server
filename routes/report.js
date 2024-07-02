@@ -1,7 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const { reportShop } = require('../controllers/report')
+const { report, getReport, deleteReport } = require('../controllers/report')
 
-router.post('/report', reportShop)
+router.post('/reports', report)
+router.get('/reports', getReport)
+router.delete('/reports/:id', deleteReport)
 
 module.exports = router

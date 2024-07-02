@@ -220,6 +220,78 @@ exports.sendBanStoreEmail = async (req, res) => {
     })
 }
 
+exports.sendReportShopEmail = async (req, res) => {
+  console.log('Send report shop email')
+  const user = await User.findById({ _id: req.params.userId })
+  const time = formatDate(Date.now())
+  const title = 'BÁO CÁO GIAN HÀNG'
+  const text = `Chúng tôi xin thông báo rằng tài khoản shop của bạn đã bị báo cáo vào lúc ${time} do vi phạm các quy định và điều khoản sử dụng của chúng tôi. <br/> Vui lòng liên hệ với chúng tôi để biết thêm thông tin chi tiết`
+  if (!user) {
+    return res.status(400).json({ error: 'User information is missing' })
+  }
+  const name = user.firstName + ' ' + user.lastName
+  const email = user.email
+  transport
+    .sendMail({
+      from: process.env.ADMIN_EMAIL,
+      to: email,
+      subject: `Zenpii E-commerce - ${title}`,
+      html: `<div>
+          <h2>Zenpii!</h2>
+          <h1>${title}</h1>
+          <p>Xin chào, ${name},</p>
+          <p>Cảm ơn bạn đã lựa chọn Zenpii.</p>
+          <p>${text}</p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ hỗ trợ khách hàng</p>
+          <p>Email: <a href="mailto:support@gmail.com">support@gmail.com</a></p>
+
+        </div>`
+    })
+    .then(() => {
+      console.log('Send email successfully')
+    })
+    .catch((error) => {
+      console.log('Send email failed', error)
+    })
+}
+
+exports.sendReportProductEmail = async (req, res) => {
+  console.log('Send report product email')
+  const user = await User.findById({ _id: req.params.userId })
+  const time = formatDate(Date.now())
+  const title = 'BÁO CÁO SẢN PHẨM'
+  const text = `Chúng tôi xin thông báo rằng tài khoản shop của bạn đã bị báo cáo vào lúc ${time} do vi phạm các quy định và điều khoản sử dụng của chúng tôi. <br/> Vui lòng liên hệ với chúng tôi để biết thêm thông tin chi tiết`
+  if (!user) {
+    return res.status(400).json({ error: 'User information is missing' })
+  }
+  const name = user.firstName + ' ' + user.lastName
+  const email = user.email
+  transport
+    .sendMail({
+      from: process.env.ADMIN_EMAIL,
+      to: email,
+      subject: `Zenpii E-commerce - ${title}`,
+      html: `<div>
+          <h2>Zenpii!</h2>
+          <h1>${title}</h1>
+          <p>Xin chào, ${name},</p>
+          <p>Cảm ơn bạn đã lựa chọn Zenpii.</p>
+          <p>${text}</p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ hỗ trợ khách hàng</p>
+          <p>Email: <a href="mailto:support@gmail.com">support@gmail.com</a></p>
+
+        </div>`
+    })
+    .then(() => {
+      console.log('Send email successfully')
+    })
+    .catch((error) => {
+      console.log('Send email failed', error)
+    })
+}
+
 exports.verifyEmail = (req, res) => {
   User.findOneAndUpdate(
     { email_code: req.params.emailCode },

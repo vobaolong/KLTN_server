@@ -34,6 +34,11 @@ const initSocketServer = (server) => {
       }
     })
 
+    socket.on('notificationReport', async () => {
+      const adminId = process.env.ADMIN_ID
+      io.to(adminId).emit('notification', adminId)
+    })
+
     socket.on('join', (userId) => {
       socket.join(userId)
     })

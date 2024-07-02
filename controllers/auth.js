@@ -38,13 +38,13 @@ exports.signin = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(404).json({
-          error: 'User not found'
+          error: 'Không tìm thấy người dùng! Vui lòng thử lại'
         })
       }
 
       if (!user.authenticate(password)) {
         return res.status(401).json({
-          error: "Password doesn't match"
+          error: 'Mật khẩu không khớp! Vui lòng thử lại'
         })
       }
 
@@ -373,7 +373,6 @@ exports.isAuth = (req, res, next) => {
   }
 }
 
-//owner and staff of store
 exports.isManager = (req, res, next) => {
   if (
     !req.user._id.equals(req.store.ownerId) &&

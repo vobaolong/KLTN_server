@@ -1,7 +1,6 @@
 const Transaction = require('../models/transaction')
 const User = require('../models/user')
 const Store = require('../models/store')
-const { cleanUserLess, cleanUser } = require('../helpers/userHandler')
 const { errorHandler } = require('../helpers/errorHandler')
 
 exports.transactionById = (req, res, next, id) => {
