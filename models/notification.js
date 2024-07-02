@@ -1,25 +1,25 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const notificationSchema = new mongoose.Schema(
   {
     message: {
       type: String,
-      required: true,
+      required: true
     },
     userId: {
       type: String,
-      required: true,
+      required: true
     },
     orderId: {
-      type: String,
+      type: String
       // required: true
     },
     isRead: {
       type: Boolean,
-      required: true,
-    },
+      required: true
+    }
   },
   { timestamps: true }
-);
+)
 
-module.exports = mongoose.model("Notification", notificationSchema);
+module.exports = mongoose.model('Notification', notificationSchema)
