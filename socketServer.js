@@ -1,51 +1,51 @@
-const { Server: SocketIOServer } = require("socket.io");
+const { Server: SocketIOServer } = require('socket.io')
 const {
   notificationOrder,
   notificationCancelled,
   notificationDelivered,
-  notificationLowStock,
-} = require("./controllers/notification");
+  notificationLowStock
+} = require('./controllers/notification')
 
 const initSocketServer = (server) => {
-  const io = new SocketIOServer(server);
+  const io = new SocketIOServer(server)
 
-  io.on("connection", (socket) => {
-    socket.on("notificationOrder", async ({ orderId, from, to }) => {
-      const [success, storeId] = await notificationOrder(orderId, from, to);
+  io.on('connection', (socket) => {
+    socket.on('notificationOrder', async ({ orderId, from, to }) => {
+      const [success, storeId] = await notificationOrder(orderId, from, to)
       if (success) {
-        io.to(from).emit("notification", from);
-        io.to(storeId).emit("notification", storeId);
+        io.to(from).emit('notification', from)
+        io.to(storeId).emit('notification', storeId)
       }
-    });
+    })
 
-    socket.on("notificationCancel", async ({ orderId, from, to }) => {
-      const [success, storeId] = await notificationCancelled(orderId, from, to);
+    socket.on('notificationCancel', async ({ orderId, from, to }) => {
+      const [success, storeId] = await notificationCancelled(orderId, from, to)
       if (success) {
-        io.to(from).emit("notification", from);
-        io.to(storeId).emit("notification", storeId);
+        io.to(from).emit('notification', from)
+        io.to(storeId).emit('notification', storeId)
       }
-    });
+    })
 
-    socket.on("notificationDelivered", async ({ orderId, from, to }) => {
-      const [success, storeId] = await notificationDelivered(orderId, from, to);
+    socket.on('notificationDelivered', async ({ orderId, from, to }) => {
+      const [success, storeId] = await notificationDelivered(orderId, from, to)
       if (success) {
-        io.to(to).emit("notification", to);
-        io.to(storeId).emit("notification", storeId);
+        io.to(to).emit('notification', to)
+        io.to(storeId).emit('notification', storeId)
       }
-    });
+    })
 
-    socket.on("notificationReport", async () => {
-      const adminId = process.env.ADMIN_ID;
-      io.to(adminId).emit("notification", adminId);
-    });
+    socket.on('notificationReport', async () => {
+      const adminId = process.env.ADMIN_ID
+      io.to(adminId).emit('notification', adminId)
+    })
 
-    socket.on("join", (userId) => {
-      socket.join(userId);
-    });
+    socket.on('join', (userId) => {
+      socket.join(userId)
+    })
 
     // socket.on('disconnect', () => {
     //   console.log('A user disconnected')
     // })
-  });
-};
-module.exports = { initSocketServer };
+  })
+}
+module.exports = { initSocketServer }
