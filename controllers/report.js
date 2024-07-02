@@ -9,10 +9,78 @@ const Product = require("../models/product");
 
 exports.getReport = async (req, res) => {
   try {
-    const reports = await Report.find();
+    const sortBy = req.query.sortBy ? req.query.sortBy : "createdAt";
+    const order =
+      req.query.order && (req.query.order == "asc" || req.query.order == "desc")
+        ? req.query.order
+        : "desc";
 
-    res.status(200).json({ reports: reports });
+    const limit =
+      req.query.limit && req.query.limit > 0 ? parseInt(req.query.limit) : 6;
+    const page =
+      req.query.page && req.query.page > 0 ? parseInt(req.query.page) : 1;
+
+    const isStore = req.query.isStore;
+    let skip = limit * (page - 1);
+
+    const filter = {
+      isStore,
+      sortBy,
+      order,
+      limit,
+      pageCurrent: page,
+    };
+
+    const size = await Report.countDocuments({
+      isStore: isStore,
+    });
+
+    const pageCount = Math.ceil(size / limit);
+    filter.pageCount = pageCount;
+
+    if (page > pageCount) {
+      skip = (pageCount - 1) * limit;
+    }
+
+    if (size <= 0) {
+      return res.json({
+        success: "Load list reports successfully",
+        filter,
+        size,
+        reports: [],
+      });
+    }
+
+    const reports = await Report.find({
+      isStore: isStore,
+    })
+      .sort({ [sortBy]: order, _id: 1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("reportBy", "_id firstName lastName avatar");
+
+    const newReports = await Promise.all(
+      reports.map(async (report) => {
+        if (report.isStore) {
+          const store = await Store.findById(report.objectId);
+          if (!store) return report;
+          return { ...report._doc, objectId: { ...store._doc } };
+        } else {
+          const product = await Product.findById(report.objectId);
+          if (!product) return report;
+          return { ...report._doc, objectId: { ...product._doc } };
+        }
+      })
+    );
+
+    res.status(200).json({
+      success: "Load list reports successfully",
+      filter,
+      size,
+      reports: newReports,
+    });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Lỗi server", error });
   }
 };
