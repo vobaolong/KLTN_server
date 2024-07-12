@@ -35,10 +35,10 @@ mongoose
     useUnifiedTopology: true
   })
   .then(() => {
-    console.log('DB connected!')
+    console.log('✅ DB connected')
   })
   .catch((error) => {
-    console.error('Error connecting to database:', error)
+    console.error('⚠️ Error connecting to database:', error)
   })
 
 // app.use(morgan('dev'))

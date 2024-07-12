@@ -16,7 +16,8 @@ const reportSchema = new mongoose.Schema(
     reason: {
       // lý do báo cáo
       type: String,
-      required: true
+      required: true,
+      maxLength: 100
     },
     reportBy: {
       // id của người báo cáo

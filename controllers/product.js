@@ -72,7 +72,7 @@ exports.getProduct = (req, res) => {
       path: 'variantValueIds',
       populate: { path: 'variantId' }
     })
-    .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('storeId', '_id name avatar isActive isOpen ownerId')
     .exec()
     .then((product) => {
       if (!product) {
@@ -277,7 +277,7 @@ exports.activeProduct = (req, res) => {
       path: 'variantValueIds',
       populate: { path: 'variantId' }
     })
-    .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('storeId', '_id name avatar isActive isOpen ownerId')
     .exec()
     .then((product) => {
       if (!product) {
@@ -1061,7 +1061,7 @@ exports.listProductsForAdmin = (req, res) => {
         path: 'variantValueIds',
         populate: { path: 'variantId' }
       })
-      .populate('storeId', '_id name avatar isActive isOpen')
+      .populate('storeId', '_id name avatar isActive isOpen ownerId')
       .exec()
       .then((products) => {
         return res.json({

@@ -5,6 +5,7 @@ const fs = require('fs')
 const { errorHandler } = require('../helpers/errorHandler')
 const { cleanUser, cleanUserLess } = require('../helpers/userHandler')
 const { cleanStore } = require('../helpers/storeHandler')
+const Notification = require('../models/notification')
 
 /*------
   STORE
@@ -125,7 +126,7 @@ exports.createStore = async (req, res) => {
 
   await addressCache.save()
 
-  store.save((error, store) => {
+  await store.save((error, store) => {
     if (error || !store) {
       try {
         fs.unlinkSync('public' + req.filepaths[0])
@@ -142,6 +143,16 @@ exports.createStore = async (req, res) => {
       storeId: store._id
     })
   })
+  // Gửi thông báo cho admin
+  const adminId = process.env.ADMIN_ID
+  const adminNotification = new Notification({
+    message: `Có cửa hàng mới: ${store.name}`,
+    userId: adminId,
+    isRead: false,
+    objectId: ''
+  })
+
+  await adminNotification.save()
 }
 
 exports.updateStore = async (req, res) => {

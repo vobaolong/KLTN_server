@@ -1,7 +1,7 @@
 const Report = require('../models/report')
 const Notification = require('../models/notification')
 const {
-  sendReportShopEmail,
+  sendReportStoreEmail,
   sendReportProductEmail
 } = require('../controllers/email')
 const Store = require('../models/store')
@@ -110,10 +110,12 @@ exports.report = async (req, res) => {
     // Gửi thông báo cho admin
     const adminId = process.env.ADMIN_ID
     const adminNotification = new Notification({
-      message: `Có báo cáo mới: ${reason}`,
+      message: `${
+        isStore ? 'Có báo cáo cửa hàng mới' : 'Có báo cáo sản phẩm mới'
+      }: ${reason}`,
       userId: adminId,
       isRead: false,
-      orderId: ''
+      objectId: `Mã đối tượng: ${objectId}`
     })
 
     await adminNotification.save()
@@ -122,7 +124,7 @@ exports.report = async (req, res) => {
     //   const store = await Store.findById(objectId);
 
     //   if (store) {
-    //     await sendReportShopEmail(
+    //     await sendReportStoreEmail(
     //       {
     //         params: {
     //           userId: store.ownerId,

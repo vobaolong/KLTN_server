@@ -198,20 +198,19 @@ exports.forgotPassword = (req, res, next) => {
         })
       }
 
-      //send email or phone
       const msg = {
         email: email ? email : '',
         phone: phone ? phone : '',
         name: user.firstName + ' ' + user.lastName,
-        title: 'Request to change password',
-        text: 'Please click on the following link to change your password.',
+        title: 'Yêu cầu khôi phục mật khẩu',
+        text: 'Vui lòng nhấp vào liên kết sau để thay đổi mật khẩu của bạn.',
         code: forgot_password_code
       }
       req.msg = msg
       next()
 
       return res.json({
-        success: 'Request successfully, waiting for email or sms'
+        success: 'Yêu cầu thành công, chờ email hoặc sms'
       })
     })
     .catch((error) => {
@@ -240,7 +239,8 @@ exports.changePassword = (req, res) => {
       user.save((e, u) => {
         if (e) {
           return res.status(500).json({
-            error: 'Update password failed, Please request to resend mail/sms'
+            error:
+              'Cập nhật mật khẩu không thành công, vui lòng yêu cầu gửi lại email/sms'
           })
         }
         return res.json({

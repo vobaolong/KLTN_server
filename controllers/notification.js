@@ -1,21 +1,21 @@
 const Notification = require('../models/notification')
 const Store = require('../models/store')
 
-exports.notificationOrder = async (orderId, from, to) => {
+exports.notificationOrder = async (objectId, from, to) => {
   try {
     const store = await Store.findById(to)
     const buyerNotification = new Notification({
       message: `Đặt hàng thành công`,
       userId: from,
       isRead: false,
-      orderId: orderId
+      objectId: objectId
     })
 
     const sellerNotification = new Notification({
       message: `Có đơn hàng mới`,
       userId: store.ownerId.toString(),
       isRead: false,
-      orderId: orderId
+      objectId: objectId
     })
 
     await Promise.all([buyerNotification.save(), sellerNotification.save()])
@@ -27,7 +27,7 @@ exports.notificationOrder = async (orderId, from, to) => {
   }
 }
 
-exports.notificationCancelled = async (orderId, from, to) => {
+exports.notificationCancelled = async (objectId, from, to) => {
   try {
     const store = await Store.findById(to)
 
@@ -35,14 +35,14 @@ exports.notificationCancelled = async (orderId, from, to) => {
       message: `Huỷ đơn hàng thành công`,
       userId: from,
       isRead: false,
-      orderId: orderId
+      objectId: objectId
     })
 
     const sellerNotification = new Notification({
       message: `Có đơn hàng bị huỷ`,
       userId: store.ownerId.toString(),
       isRead: false,
-      orderId: orderId
+      objectId: objectId
     })
 
     await Promise.all([buyerNotification.save(), sellerNotification.save()])
@@ -54,13 +54,13 @@ exports.notificationCancelled = async (orderId, from, to) => {
   }
 }
 
-exports.notificationDelivered = async (orderId, from, to) => {
+exports.notificationDelivered = async (objectId, from, to) => {
   try {
     const buyerNotification = new Notification({
       message: `Đơn hàng đã được giao`,
       userId: to,
       isRead: false,
-      orderId: orderId
+      objectId: objectId
     })
 
     await buyerNotification.save()

@@ -49,9 +49,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    phone_code: {
-      type: String
-    },
+    // phone_code: {
+    //   type: String
+    // },
     id_card: {
       type: String,
       trim: true,
@@ -103,10 +103,6 @@ const userSchema = new mongoose.Schema(
       trim: true,
       unique: true,
       sparse: true
-    },
-    isActive: {
-      type: Boolean,
-      default: true
     }
   },
   { timestamps: true }

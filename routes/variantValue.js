@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 
-//import controllers
 const { isAuth, isAdmin } = require('../controllers/auth')
 const { userById } = require('../controllers/user')
 const { variantById } = require('../controllers/variant')
@@ -15,7 +14,6 @@ const {
   listVariantValuesByVariant
 } = require('../controllers/variantValue')
 
-//routes
 router.get(
   '/active/variant/values/by/variant/:variantId',
   listActiveVariantValuesByVariant

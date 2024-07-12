@@ -10,7 +10,7 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    orderId: {
+    objectId: {
       type: String
       // required: true
     },

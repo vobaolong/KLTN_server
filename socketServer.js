@@ -2,32 +2,31 @@ const { Server: SocketIOServer } = require('socket.io')
 const {
   notificationOrder,
   notificationCancelled,
-  notificationDelivered,
-  notificationLowStock
+  notificationDelivered
 } = require('./controllers/notification')
 
 const initSocketServer = (server) => {
   const io = new SocketIOServer(server)
 
   io.on('connection', (socket) => {
-    socket.on('notificationOrder', async ({ orderId, from, to }) => {
-      const [success, storeId] = await notificationOrder(orderId, from, to)
+    socket.on('notificationOrder', async ({ objectId, from, to }) => {
+      const [success, storeId] = await notificationOrder(objectId, from, to)
       if (success) {
         io.to(from).emit('notification', from)
         io.to(storeId).emit('notification', storeId)
       }
     })
 
-    socket.on('notificationCancel', async ({ orderId, from, to }) => {
-      const [success, storeId] = await notificationCancelled(orderId, from, to)
+    socket.on('notificationCancel', async ({ objectId, from, to }) => {
+      const [success, storeId] = await notificationCancelled(objectId, from, to)
       if (success) {
         io.to(from).emit('notification', from)
         io.to(storeId).emit('notification', storeId)
       }
     })
 
-    socket.on('notificationDelivered', async ({ orderId, from, to }) => {
-      const [success, storeId] = await notificationDelivered(orderId, from, to)
+    socket.on('notificationDelivered', async ({ objectId, from, to }) => {
+      const [success, storeId] = await notificationDelivered(objectId, from, to)
       if (success) {
         io.to(to).emit('notification', to)
         io.to(storeId).emit('notification', storeId)
@@ -35,6 +34,11 @@ const initSocketServer = (server) => {
     })
 
     socket.on('notificationReport', async () => {
+      const adminId = process.env.ADMIN_ID
+      io.to(adminId).emit('notification', adminId)
+    })
+
+    socket.on('notificationShopNew', async () => {
       const adminId = process.env.ADMIN_ID
       io.to(adminId).emit('notification', adminId)
     })

@@ -47,11 +47,11 @@ const storeSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      default: true
+      default: false
     },
     isOpen: {
       type: Boolean,
-      default: true
+      default: false
     },
     avatar: {
       type: String,
