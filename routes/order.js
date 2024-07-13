@@ -26,7 +26,9 @@ const {
   updateQuantitySoldProduct,
   countOrders,
   listOrderItems,
-  updatePoint
+  updatePoint,
+  createReturnRequest,
+  returnOrder
 } = require('../controllers/order')
 
 //routes
@@ -37,6 +39,22 @@ router.get(
   checkOrderAuth,
   listOrderItems
 )
+
+router.post(
+  '/order/return/:orderId/:userId',
+  isAuth,
+  checkOrderAuth,
+  createReturnRequest
+)
+
+router.put(
+  '/order/:orderId/return/approve',
+  isAuth,
+  isManager,
+  checkOrderAuth,
+  returnOrder
+)
+
 router.get(
   '/order/items/by/store/:orderId/:storeId/:userId',
   isAuth,

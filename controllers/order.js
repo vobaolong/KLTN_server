@@ -644,7 +644,7 @@ exports.updateStatusForStore = (req, res, next) => {
     (currentStatus === 'Delivered' && status !== 'Delivered')
   )
     return res.status(401).json({
-      error: 'This status update is invalid!'
+      error: 'Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại sau.'
     })
 
   Order.findOneAndUpdate(
@@ -756,6 +756,112 @@ exports.updateQuantitySoldProduct = (req, res, next) => {
     })
 
   next()
+}
+exports.createReturnRequest = (req, res) => {
+  const { reason, items } = req.body
+  const orderId = req.order._id
+
+  if (!reason || !items || items.length === 0) {
+    return res.status(400).json({
+      error: 'Reason and items are required'
+    })
+  }
+
+  const returnRequest = {
+    reason,
+    items,
+    status: 'Pending',
+    createdAt: new Date(),
+    userId: req.user._id
+  }
+
+  Order.findByIdAndUpdate(
+    orderId,
+    { $push: { returnRequests: returnRequest } },
+    { new: true },
+    (error, order) => {
+      if (error || !order) {
+        return res.status(500).json({
+          error: 'Could not create return request'
+        })
+      }
+
+      return res.json({
+        success: 'Return request created successfully',
+        order
+      })
+    }
+  )
+}
+
+exports.returnOrder = (req, res) => {
+  const orderId = req.order._id
+  const { requestId, status } = req.body
+
+  if (!requestId || !status) {
+    return res.status(400).json({
+      error: 'Request ID and status are required'
+    })
+  }
+
+  Order.findOneAndUpdate(
+    { _id: orderId, 'returnRequests._id': requestId },
+    { $set: { 'returnRequests.$.status': status } },
+    { new: true },
+    (error, order) => {
+      if (error || !order) {
+        return res.status(500).json({
+          error: 'Could not update return request'
+        })
+      }
+
+      // Update product quantities and other related logic here
+      if (status === 'Approved') {
+        // Logic to handle approved return
+        handleApprovedReturn(order, requestId)
+          .then(() => {
+            return res.json({
+              success: 'Return request approved successfully',
+              order
+            })
+          })
+          .catch((err) => {
+            return res.status(500).json({
+              error: 'Failed to handle approved return'
+            })
+          })
+      } else {
+        return res.json({
+          success: 'Return request updated successfully',
+          order
+        })
+      }
+    }
+  )
+}
+
+const handleApprovedReturn = async (order, requestId) => {
+  const returnRequest = order.returnRequests.id(requestId)
+
+  for (let item of returnRequest.items) {
+    await Product.findByIdAndUpdate(item.productId, {
+      $inc: { quantity: item.count, sold: -item.count }
+    })
+  }
+
+  // Logic to update user's points, refund amount, etc.
+  await User.findByIdAndUpdate(order.userId, {
+    $inc: { point: -1 }
+  })
+
+  // Refund logic if necessary
+  if (order.isPaidBefore) {
+    await createTransaction({
+      userId: order.userId,
+      isUp: true,
+      amount: order.amountFromUser
+    })
+  }
 }
 
 exports.countOrders = (req, res) => {
