@@ -758,18 +758,17 @@ exports.updateQuantitySoldProduct = (req, res, next) => {
   next()
 }
 exports.createReturnRequest = (req, res) => {
-  const { reason, items } = req.body
+  const { reason } = req.body
   const orderId = req.order._id
 
-  if (!reason || !items || items.length === 0) {
+  if (!reason) {
     return res.status(400).json({
-      error: 'Reason and items are required'
+      error: 'Reason are required'
     })
   }
 
   const returnRequest = {
     reason,
-    items,
     status: 'Pending',
     createdAt: new Date(),
     userId: req.user._id
