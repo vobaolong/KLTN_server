@@ -796,6 +796,23 @@ exports.createReturnRequest = (req, res) => {
   );
 };
 
+exports.getReturnOrder = async (req, res) => {
+  const status = req.query.status;
+
+  let returnOrder = null;
+
+  if (status) {
+    returnOrder = await Order.find({
+      "returnRequests.status": status,
+    });
+  } else {
+    returnOrder = await Order.find({
+      returnRequests: { $exists: true },
+    });
+  }
+  return res.status(200).json({ returnOrders: returnOrder });
+};
+
 exports.returnOrder = (req, res) => {
   const orderId = req.params.orderId;
   const { requestId, status } = req.body;

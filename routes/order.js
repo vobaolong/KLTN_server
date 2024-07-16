@@ -29,6 +29,7 @@ const {
   updatePoint,
   createReturnRequest,
   returnOrder,
+  getReturnOrder,
 } = require("../controllers/order");
 
 //routes
@@ -39,6 +40,8 @@ router.get(
   checkOrderAuth,
   listOrderItems
 );
+
+router.get("/order/return", getReturnOrder);
 
 router.post(
   "/order/return/:orderId/:userId",
