@@ -40,17 +40,18 @@ router.get(
   checkOrderAuth,
   listOrderItems
 )
-router.get(
-  '/order/return/by/store/:storeId/:userId',
-  isAuth,
-  isManager,
-  listReturnOrder
-)
+
 router.post(
   '/order/return/:orderId/:userId',
   isAuth,
   checkOrderAuth,
   createReturnRequest
+)
+router.get(
+  '/order/return/by/store/:storeId/:userId',
+  isAuth,
+  isManager,
+  listReturnOrder
 )
 
 router.post(
