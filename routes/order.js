@@ -1,15 +1,15 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
 //controllers
-const { isAuth, isAdmin, isManager } = require("../controllers/auth");
-const { userById } = require("../controllers/user");
-const { storeById } = require("../controllers/store");
-const { cartById } = require("../controllers/cart");
+const { isAuth, isAdmin, isManager } = require('../controllers/auth')
+const { userById } = require('../controllers/user')
+const { storeById } = require('../controllers/store')
+const { cartById } = require('../controllers/cart')
 const {
   updateEWallet,
-  createTransaction,
-} = require("../controllers/transaction");
+  createTransaction
+} = require('../controllers/transaction')
 const {
   orderById,
   createOrder,
@@ -29,93 +29,94 @@ const {
   updatePoint,
   createReturnRequest,
   returnOrder,
-} = require("../controllers/order");
+  listReturnOrder
+} = require('../controllers/order')
 
 //routes
-router.get("/orders/count", countOrders);
+router.get('/orders/count', countOrders)
 router.get(
-  "/order/items/by/user/:orderId/:userId",
+  '/order/items/by/user/:orderId/:userId',
   isAuth,
   checkOrderAuth,
   listOrderItems
-);
-
+)
+router.get(
+  '/order/return/by/store/:storeId/:userId',
+  isAuth,
+  isManager,
+  listReturnOrder
+)
 router.post(
-  "/order/return/:orderId/:userId",
+  '/order/return/:orderId/:userId',
   isAuth,
   checkOrderAuth,
   createReturnRequest
-);
+)
 
-router.put(
-  "/order/:orderId/return/approve",
+router.post(
+  '/order/return/:orderId/:storeId/:userId/approve',
   isAuth,
   isManager,
   checkOrderAuth,
   returnOrder
-);
+)
 
 router.get(
-  "/order/items/by/store/:orderId/:storeId/:userId",
+  '/order/items/by/store/:orderId/:storeId/:userId',
   isAuth,
   isManager,
   checkOrderAuth,
   listOrderItems
-);
+)
 router.get(
-  "/order/items/for/admin/:orderId/:userId",
+  '/order/items/for/admin/:orderId/:userId',
   isAuth,
   isAdmin,
   checkOrderAuth,
   listOrderItems
-);
+)
+router.get('/order/by/user/:orderId/:userId', isAuth, checkOrderAuth, readOrder)
 router.get(
-  "/order/by/user/:orderId/:userId",
-  isAuth,
-  checkOrderAuth,
-  readOrder
-);
-router.get(
-  "/order/by/store/:orderId/:storeId/:userId",
+  '/order/by/store/:orderId/:storeId/:userId',
   isAuth,
   isManager,
   checkOrderAuth,
   readOrder
-);
+)
 router.get(
-  "/order/for/admin/:orderId/:userId",
+  '/order/for/admin/:orderId/:userId',
   isAuth,
   isAdmin,
   checkOrderAuth,
   readOrder
-);
-router.get("/orders/by/user/:userId", isAuth, listOrderByUser);
+)
+router.get('/orders/by/user/:userId', isAuth, listOrderByUser)
 router.get(
-  "/orders/by/store/:storeId/:userId",
+  '/orders/by/store/:storeId/:userId',
   isAuth,
   isManager,
   listOrderByStore
-);
-router.get("/orders/for/admin/:userId", isAuth, isAdmin, listOrderForAdmin);
+)
+router.get('/orders/for/admin/:userId', isAuth, isAdmin, listOrderForAdmin)
 router.post(
-  "/order/create/:cartId/:userId",
+  '/order/create/:cartId/:userId',
   isAuth,
   createOrder,
   createOrderItems,
   removeCart,
   removeAllCartItems
-);
+)
 router.put(
-  "/order/update/by/user/:orderId/:userId",
+  '/order/update/by/user/:orderId/:userId',
   isAuth,
   checkOrderAuth,
   updateStatusForUser,
   updateEWallet,
   createTransaction,
   updatePoint
-);
+)
 router.put(
-  "/order/update/by/store/:orderId/:storeId/:userId",
+  '/order/update/by/store/:orderId/:storeId/:userId',
   isAuth,
   isManager,
   checkOrderAuth,
@@ -124,22 +125,12 @@ router.put(
   createTransaction,
   updateQuantitySoldProduct,
   updatePoint
-);
-// router.put(
-//   '/order/update/for/admin/:orderId/:userId',
-//   isAuth,
-//   isAdmin,
-//   checkOrderAuth,
-//   updateEWallet,
-//   createTransaction,
-//   updateQuantitySoldProduct,
-//   updatePoint
-// )
+)
 
 //params
-router.param("orderId", orderById);
-router.param("cartId", cartById);
-router.param("storeId", storeById);
-router.param("userId", userById);
+router.param('orderId', orderById)
+router.param('cartId', cartById)
+router.param('storeId', storeById)
+router.param('userId', userById)
 
-module.exports = router;
+module.exports = router

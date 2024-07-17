@@ -2,7 +2,8 @@ const { Server: SocketIOServer } = require('socket.io')
 const {
   notificationOrder,
   notificationCancelled,
-  notificationDelivered
+  notificationDelivered,
+  notificationReturn
 } = require('./controllers/notification')
 
 const initSocketServer = (server) => {
@@ -29,6 +30,14 @@ const initSocketServer = (server) => {
       const [success, storeId] = await notificationDelivered(objectId, from, to)
       if (success) {
         io.to(to).emit('notification', to)
+        io.to(storeId).emit('notification', storeId)
+      }
+    })
+
+    socket.on('notificationReturn', async ({ objectId, from, to }) => {
+      const [success, storeId] = await notificationReturn(objectId, from, to)
+      if (success) {
+        io.to(from).emit('notification', from)
         io.to(storeId).emit('notification', storeId)
       }
     })

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { ObjectId } = mongoose.Schema
 
-const refundSchema = new mongoose.Schema(
+const returnSchema = new mongoose.Schema(
   {
     orderId: {
       type: ObjectId,
@@ -20,10 +20,10 @@ const refundSchema = new mongoose.Schema(
     status: {
       type: String,
       default: 'Pending',
-      enum: ['Pending', 'Approved', 'Rejected', 'Processed']
+      enum: ['Pending', 'Approved', 'Rejected']
     }
   },
   { timestamps: true }
 )
 
-module.exports = mongoose.model('Refund', refundSchema)
+module.exports = mongoose.model('Return', returnSchema)

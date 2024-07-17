@@ -72,6 +72,25 @@ exports.notificationDelivered = async (objectId, from, to) => {
   }
 }
 
+exports.notificationReturn = async (objectId, from, to) => {
+  try {
+    const store = await Store.findById(to)
+    const sellerNotification = new Notification({
+      message: `Có yêu cầu hoàn trả`,
+      userId: store.ownerId.toString(),
+      isRead: false,
+      objectId: objectId
+    })
+
+    await sellerNotification.save()
+    console.log('Send notification successfully')
+    return [true, '']
+  } catch (error) {
+    console.error('Error in notificationReturn:', error)
+    return [false, '']
+  }
+}
+
 exports.deleteNotifications = async (req, res) => {
   const { userId } = req.params
 

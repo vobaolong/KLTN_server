@@ -5,7 +5,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const path = require('path')
 const http = require('http')
-
+const rateLimit = require('express-rate-limit')
 require('dotenv').config()
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
@@ -44,6 +44,12 @@ mongoose
 // app.use(morgan('dev'))
 app.use('/static', express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({ extended: true }))
+// const apiLimiter = rateLimit({
+//   windowMs: 60 * 1000, // 1 minutes
+//   max: 2,
+//   message: 'Too many connection'
+// })
+// app.use(apiLimiter)
 app.use(express.json())
 app.use(cookieParser())
 app.use(
@@ -54,10 +60,13 @@ app.use(
       `http://localhost:${process.env.CLIENT_PORT_3}`
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 )
 
+// app.use(express.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+// app.use(express.json({limit: "50mb"}));
 app.use('/api', authRoutes)
 app.use('/api', userRoutes)
 app.use('/api', storeRoutes)
