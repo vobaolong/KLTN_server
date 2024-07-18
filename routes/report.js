@@ -1,9 +1,13 @@
 const express = require('express')
+const {
+  getReports,
+  createReport,
+  deleteReport
+} = require('../controllers/report')
 const router = express.Router()
-const { report, getReport, deleteReport } = require('../controllers/report')
 
-router.post('/reports', report)
-router.get('/reports', getReport)
+router.get('/reports', getReports)
+router.post('/reports', createReport)
 router.delete('/reports/:id', deleteReport)
 
 module.exports = router

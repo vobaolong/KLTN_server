@@ -125,6 +125,42 @@ exports.removeReview = (req, res, next) => {
   )
 }
 
+exports.adminDeleteReview = (req, res, next) => {
+  const isAdmin = req.user.role === 'admin'
+  let deleteCondition = { _id: req.review._id }
+
+  if (!isAdmin) {
+    deleteCondition.userId = req.user._id
+  }
+
+  Review.deleteOne(deleteCondition, (error, result) => {
+    if (error) {
+      return res.status(400).json({
+        error: errorHandler(error)
+      })
+    }
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        error:
+          'Review not found or you do not have permission to delete this review'
+      })
+    }
+
+    req.body = {
+      ...req.body,
+      productId: req.review.productId,
+      storeId: req.review.storeId
+    }
+
+    res.json({
+      success: 'Remove review successfully',
+      result
+    })
+
+    next()
+  })
+}
 exports.updateRating = (req, res) => {
   const { productId, storeId } = req.body
   Review.aggregate(

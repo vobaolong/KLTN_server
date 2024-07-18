@@ -4,28 +4,39 @@ const { ObjectId } = mongoose.Schema
 const reportSchema = new mongoose.Schema(
   {
     objectId: {
-      // ID của product hoặc store bị báo cáo
-      type: String,
-      required: true
+      type: ObjectId,
+      required: true,
+      refPath: 'onModel'
     },
     isStore: {
-      // nếu là true thì là báo cáo shop, còn false là báo cáo product
       type: Boolean,
       required: true
     },
+    isProduct: {
+      type: Boolean,
+      required: true
+    },
+    isReview: {
+      type: Boolean,
+      default: false
+    },
     reason: {
-      // lý do báo cáo
       type: String,
       required: true,
       maxLength: 100
     },
     reportBy: {
-      // id của người báo cáo
       type: ObjectId,
       ref: 'User',
       required: true
+    },
+    onModel: {
+      type: String,
+      required: true,
+      enum: ['Store', 'Product', 'Review']
     }
   },
   { timestamps: true }
 )
+
 module.exports = mongoose.model('Report', reportSchema)

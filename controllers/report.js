@@ -2,45 +2,46 @@ const Report = require('../models/report')
 const Notification = require('../models/notification')
 const {
   sendReportStoreEmail,
-  sendReportProductEmail
+  sendReportProductEmail,
+  sendReportReviewEmail
 } = require('../controllers/email')
 const Store = require('../models/store')
 const Product = require('../models/product')
+const Review = require('../models/review')
 
-exports.getReport = async (req, res) => {
+// Get reports
+exports.getReports = async (req, res) => {
   try {
-    const sortBy = req.query.sortBy ? req.query.sortBy : 'createdAt'
-    const order =
-      req.query.order && (req.query.order == 'asc' || req.query.order == 'desc')
-        ? req.query.order
-        : 'desc'
-
-    const limit =
-      req.query.limit && req.query.limit > 0 ? parseInt(req.query.limit) : 6
-    const page =
-      req.query.page && req.query.page > 0 ? parseInt(req.query.page) : 1
-
-    const isStore = req.query.isStore
-    let skip = limit * (page - 1)
+    const {
+      search = '',
+      sortBy = 'createdAt',
+      order = 'desc',
+      limit = 6,
+      page = 1
+    } = req.query
+    const skip = limit * (page - 1)
+    const isStore = req.query.isStore === 'true'
+    const isProduct = req.query.isProduct === 'true'
+    const isReview = req.query.isReview === 'true'
 
     const filter = {
+      search,
       isStore,
+      isProduct,
+      isReview,
       sortBy,
       order,
       limit,
       pageCurrent: page
     }
-
     const size = await Report.countDocuments({
-      isStore: isStore
+      isStore,
+      isProduct,
+      isReview
     })
 
     const pageCount = Math.ceil(size / limit)
     filter.pageCount = pageCount
-
-    if (page > pageCount) {
-      skip = (pageCount - 1) * limit
-    }
 
     if (size <= 0) {
       return res.json({
@@ -51,9 +52,7 @@ exports.getReport = async (req, res) => {
       })
     }
 
-    const reports = await Report.find({
-      isStore: isStore
-    })
+    const reports = await Report.find({ isStore, isProduct, isReview })
       .sort({ [sortBy]: order, _id: 1 })
       .skip(skip)
       .limit(limit)
@@ -65,10 +64,14 @@ exports.getReport = async (req, res) => {
           const store = await Store.findById(report.objectId)
           if (!store) return report
           return { ...report._doc, objectId: { ...store._doc } }
-        } else {
+        } else if (report.isProduct) {
           const product = await Product.findById(report.objectId)
           if (!product) return report
           return { ...report._doc, objectId: { ...product._doc } }
+        } else if (report.isReview) {
+          const review = await Review.findById(report.objectId)
+          if (!review) return report
+          return { ...report._doc, objectId: { ...review._doc } }
         }
       })
     )
@@ -81,37 +84,57 @@ exports.getReport = async (req, res) => {
     })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: 'Lỗi server', error })
+    res.status(500).json({ message: 'Server error', error })
   }
 }
 
+// Delete report
 exports.deleteReport = async (req, res) => {
   try {
     await Report.deleteOne({ _id: req.params.id })
-
     res.status(200).json({ message: 'Delete successfully' })
   } catch (error) {
-    res.status(500).json({ message: 'Lỗi server', error })
+    res.status(500).json({ message: 'Server error', error })
   }
 }
 
-exports.report = async (req, res) => {
+// Create report
+exports.createReport = async (req, res) => {
   try {
-    const { objectId, isStore, reason, reportBy } = req.body
+    const { objectId, isStore, isProduct, isReview, reason, reportBy } =
+      req.body
+    const onModel = isStore
+      ? 'Store'
+      : isProduct
+      ? 'Product'
+      : isReview
+      ? 'Review'
+      : null
+
+    if (!onModel) {
+      return res.status(400).json({ message: 'Invalid report type' })
+    }
+
     const report = new Report({
       objectId,
       isStore,
+      isProduct,
+      isReview,
       reason,
-      reportBy
+      reportBy,
+      onModel
     })
 
     await report.save()
 
-    // Gửi thông báo cho admin
     const adminId = process.env.ADMIN_ID
     const adminNotification = new Notification({
       message: `${
-        isStore ? 'Có báo cáo cửa hàng mới' : 'Có báo cáo sản phẩm mới'
+        isStore
+          ? 'Báo cáo shop mới'
+          : isProduct
+          ? 'Báo cáo sản phẩm mới'
+          : 'Báo cáo đánh giá mới'
       }: ${reason}`,
       userId: adminId,
       isRead: false,
@@ -120,41 +143,9 @@ exports.report = async (req, res) => {
 
     await adminNotification.save()
 
-    // if (isStore) {
-    //   const store = await Store.findById(objectId);
-
-    //   if (store) {
-    //     await sendReportStoreEmail(
-    //       {
-    //         params: {
-    //           userId: store.ownerId,
-    //         },
-    //       },
-    //       res
-    //     );
-    //   }
-    // } else {
-    //   const product = await Product.findById(objectId);
-
-    //   if (product) {
-    //     const store = await Store.findById(product.storeId);
-
-    //     if (store) {
-    //       await sendReportProductEmail(
-    //         {
-    //           params: {
-    //             userId: store.ownerId,
-    //           },
-    //         },
-    //         res
-    //       );
-    //     }
-    //   }
-    // }
-
-    res.status(201).json({ message: 'Báo cáo đã được gửi' })
+    res.status(201).json({ message: 'Report submitted successfully' })
   } catch (error) {
-    console.error('Error in reportShop:', error)
-    res.status(500).json({ message: 'Lỗi server', error })
+    console.error('Error in createReport:', error)
+    res.status(500).json({ message: 'Server error', error })
   }
 }
