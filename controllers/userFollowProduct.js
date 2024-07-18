@@ -34,7 +34,7 @@ exports.followProduct = (req, res) => {
           .then((product) => {
             if (!product) {
               return res.status(404).json({
-                error: 'Product not found'
+                error: 'Sản phẩm không tồn tại'
               })
             }
 
@@ -84,7 +84,7 @@ exports.unfollowProduct = (req, res) => {
           .then((product) => {
             if (!product) {
               return res.status(404).json({
-                error: 'Product not found'
+                error: 'Sản phẩm không tồn tại'
               })
             }
 
