@@ -11,7 +11,8 @@ const {
   sendActiveStoreEmail,
   sendBanProductEmail,
   sendActiveProductEmail,
-  sendCreateStoreEmail
+  sendCreateStoreEmail,
+  sendDeliveryEmailEmail
 } = require('../controllers/email')
 
 router.get('/notification/:userId', getNotifications)
@@ -24,5 +25,6 @@ router.post('/send-active-store/:userId/:storeId', sendActiveStoreEmail)
 router.post('/send-ban-product/:userId', sendBanProductEmail)
 
 router.post('/send-active-product/:userId', sendActiveProductEmail)
+router.post('/send-delivery-success/:userId', sendDeliveryEmailEmail)
 
 module.exports = router

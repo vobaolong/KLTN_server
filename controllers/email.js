@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const { errorHandler } = require('../helpers/errorHandler')
 const { formatDate } = require('../helpers/formatDate')
 const Store = require('../models/store')
+const Order = require('../models/order')
 
 const transport = nodemailer.createTransport({
   service: 'gmail',
@@ -145,6 +146,47 @@ exports.sendActiveStoreEmail = async (req, res) => {
   const time = formatDate(Date.now())
   const title = 'THÔNG BÁO MỞ KHOÁ TÀI KHOẢN GIAN HÀNG'
   const text = `Chúng tôi xin trân trọng thông báo rằng tài khoản shop <strong style="color: #2266cc">${store.name}</strong> của quý khách sẽ mở khóa trở lại vào lúc: <strong>${time}</strong>.<br/>Chúng tôi rất xin lỗi vì sự bất tiện mà việc đóng cửa đã gây ra và chân thành cảm ơn sự kiên nhẫn và sự ủng hộ của quý khách hàng trong thời gian qua.<br/>Mong rằng sau quá trình mở khóa, chúng tôi sẽ tiếp tục nhận được sự ủng hộ và hợp tác từ phía quý khách hàng. <br/>Mọi thắc mắc hoặc yêu cầu hỗ trợ, vui lòng liên hệ với chúng tôi qua email bên dưới.`
+  if (!user) {
+    return res.status(400).json({ error: 'User information is missing' })
+  }
+  const name = user.firstName + ' ' + user.lastName
+  const email = user.email
+  transport
+    .sendMail({
+      from: process.env.ADMIN_EMAIL,
+      to: email,
+      subject: `Zenpii E-commerce - ${title}`,
+      html: `<div style="line-height: 2.5">
+          <h1 style="color: #2266cc"><img src="https://i.imgur.com/uw3oLis.png" alt="Store Image" style="max-width: 4%; height: auto; margin-right: 10px" />${title}</h1>
+					<hr/>
+          <b>Xin chào ${name},</b>
+          <p>Cảm ơn bạn đã lựa chọn Zenpii.</p>
+          <p style="fontSize:30px">${text}</p>
+          <p>Trân trọng,</p>
+          <i>Đội ngũ hỗ trợ khách hàng</i>
+          <p>Email: <a href="mailto:baolong01.dev@gmail.com">baolong01.dev@gmail.com</a></p>
+        </div>`
+    })
+    .then(() => {
+      console.log('Send email successfully')
+      return res.json({
+        success: 'Send email successfully'
+      })
+    })
+    .catch((error) => {
+      console.log('Send email failed', error)
+      return res.status(500).json({
+        error: 'Send email failed'
+      })
+    })
+}
+exports.sendDeliveryEmailEmail = async (req, res) => {
+  console.log('Send delivery email')
+  const user = await User.findById({ _id: req.params.userId })
+  const order = await Order.findById({ _id: req.params.storeId })
+  const time = formatDate(Date.now())
+  const title = 'THÔNG BÁO GIAO HÀNG THÀNH CÔNG'
+  const text = `Chúng tôi xin trân trọng thông báo rằng đơn hàng <strong style="color: #2266cc">${order._id}</strong> của quý khách đã được giao thành công vào lúc: <strong>${time}</strong>.<br/>`
   if (!user) {
     return res.status(400).json({ error: 'User information is missing' })
   }

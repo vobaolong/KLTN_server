@@ -15,7 +15,8 @@ const returnSchema = new mongoose.Schema(
     },
     reason: {
       type: String,
-      required: true
+      required: true,
+      maxLength: 100
     },
     status: {
       type: String,
