@@ -1,5 +1,6 @@
 const Product = require('../models/product')
 const Category = require('../models/category')
+const Brand = require('../models/brand')
 const fs = require('fs')
 const { errorHandler } = require('../helpers/errorHandler')
 //
@@ -7,7 +8,7 @@ exports.productById = (req, res, next, id) => {
   Product.findById(id, (error, product) => {
     if (error || !product) {
       return res.status(404).json({
-        error: 'Product not found'
+        error: 'Sản phẩm không tồn tại'
       })
     }
     req.product = product
@@ -29,11 +30,12 @@ exports.getProductForManager = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('brandId', '_id name')
     .exec()
     .then((product) => {
       if (!product) {
         return res.status(500).json({
-          error: 'Product not found'
+          error: 'Sản phẩm không tồn tại'
         })
       }
 
@@ -44,7 +46,7 @@ exports.getProductForManager = (req, res) => {
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Product not found'
+        error: 'Sản phẩm không tồn tại'
       })
     })
 }
@@ -73,11 +75,12 @@ exports.getProduct = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen ownerId')
+    .populate('brandId', '_id name')
     .exec()
     .then((product) => {
       if (!product) {
         return res.status(500).json({
-          error: 'Product not found'
+          error: 'Sản phẩm không tồn tại'
         })
       }
 
@@ -88,7 +91,7 @@ exports.getProduct = (req, res) => {
     })
     .catch((error) => {
       return res.status(500).json({
-        error: 'Product not found'
+        error: 'Sản phẩm không tồn tại'
       })
     })
 }
@@ -101,6 +104,7 @@ exports.createProduct = (req, res) => {
     salePrice,
     quantity,
     categoryId,
+    brandId,
     variantValueIds
   } = req.fields
   const listImages = req.filepaths
@@ -128,6 +132,7 @@ exports.createProduct = (req, res) => {
   if (variantValueIds) {
     variantValueIdsArray = variantValueIds.split('|')
   }
+
   const product = new Product({
     name,
     description,
@@ -135,6 +140,7 @@ exports.createProduct = (req, res) => {
     salePrice,
     quantity,
     categoryId,
+    brandId,
     variantValueIds: variantValueIdsArray,
     isActive: req.store.isActive,
     storeId: req.store._id,
@@ -168,6 +174,7 @@ exports.updateProduct = (req, res) => {
     price,
     salePrice,
     quantity,
+    brandId,
     categoryId,
     variantValueIds
   } = req.fields
@@ -198,6 +205,7 @@ exports.updateProduct = (req, res) => {
       price,
       salePrice,
       quantity,
+      brandId,
       categoryId,
       variantValueIds: variantValueIdsArray
     },
@@ -215,11 +223,12 @@ exports.updateProduct = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('brandId', '_id name')
     .exec()
     .then((product) => {
       if (!product)
         return res.status(500).json({
-          error: 'Product not found'
+          error: 'Sản phẩm không tồn tại'
         })
 
       return res.json({
@@ -278,11 +287,12 @@ exports.activeProduct = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen ownerId')
+    .populate('brandId', '_id name')
     .exec()
     .then((product) => {
       if (!product) {
         return res.status(500).json({
-          error: 'product not found'
+          error: 'Sản phẩm không tồn tại'
         })
       }
 
@@ -319,11 +329,12 @@ exports.sellingProduct = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('brandId', '_id')
     .exec()
     .then((product) => {
       if (!product) {
         return res.status(404).json({
-          error: 'product not found'
+          error: 'Sản phẩm không tồn tại'
         })
       }
 
@@ -371,6 +382,7 @@ exports.addToListImages = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('brandId', '_id name')
     .exec()
     .then((product) => {
       if (!product) {
@@ -379,7 +391,7 @@ exports.addToListImages = (req, res) => {
         } catch {}
 
         return res.status(500).json({
-          error: 'product not found'
+          error: 'Sản phẩm không tồn tại'
         })
       }
 
@@ -439,6 +451,7 @@ exports.updateListImages = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('brandId', '_id name')
     .exec()
     .then((product) => {
       if (!product) {
@@ -447,7 +460,7 @@ exports.updateListImages = (req, res) => {
         } catch {}
 
         return res.status(500).json({
-          error: 'Product not found'
+          error: 'Sản phẩm không tồn tại'
         })
       }
 
@@ -518,11 +531,12 @@ exports.removeFromListImages = (req, res) => {
       populate: { path: 'variantId' }
     })
     .populate('storeId', '_id name avatar isActive isOpen')
+    .populate('brandId', '_id name')
     .exec()
     .then((product) => {
       if (!product) {
         return res.status(500).json({
-          error: 'Product not found'
+          error: 'Sản phẩm không tồn tại'
         })
       }
 
@@ -546,7 +560,7 @@ exports.listProductCategories = (req, res, next) => {
     (error, categories) => {
       if (error) {
         return res.status(400).json({
-          error: 'Commissions not found'
+          error: 'category not found'
         })
       }
 
@@ -716,6 +730,7 @@ exports.listProducts = (req, res) => {
         populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen address')
+      .populate('brandId', '_id name')
       .exec()
       .then((products) => {
         if (provinces) {
@@ -770,6 +785,8 @@ exports.listProductsByStore = (req, res) => {
     ? [req.query.categoryId]
     : req.loadedCategories
 
+  const brandId = req.query.brandId ? [req.query.brandId] : req.loadedBrands
+
   const rating =
     req.query.rating && req.query.rating > 0 && req.query.rating < 6
       ? parseInt(req.query.rating)
@@ -790,6 +807,7 @@ exports.listProductsByStore = (req, res) => {
     sortBy,
     order,
     categoryId,
+    brandId,
     limit,
     pageCurrent: page,
     rating: rating !== -1 ? rating : 'all',
@@ -810,6 +828,7 @@ exports.listProductsByStore = (req, res) => {
       // { description: { $regex: search, $options: 'i' } }
     ],
     categoryId: { $in: categoryId },
+    brandId: { $in: brandId },
     isSelling: true,
     isActive: true,
     storeId: req.store._id,
@@ -861,6 +880,7 @@ exports.listProductsByStore = (req, res) => {
         populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen')
+      .populate('brandId', '_id name')
       .exec()
       .then((products) => {
         return res.json({
@@ -872,7 +892,7 @@ exports.listProductsByStore = (req, res) => {
       })
       .catch((error) => {
         return res.status(500).json({
-          error: 'Load list products failed'
+          error: 'Load list products faileddd'
         })
       })
   })
@@ -971,6 +991,7 @@ exports.listProductsByStoreForManager = (req, res) => {
         populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen')
+      .populate('brandId', '_id name')
       .exec()
       .then((products) => {
         return res.json({
@@ -981,6 +1002,7 @@ exports.listProductsByStoreForManager = (req, res) => {
         })
       })
       .catch((error) => {
+        console.log('Error loading products:', error)
         return res.status(500).json({
           error: 'Load list products failed'
         })
@@ -1062,6 +1084,7 @@ exports.listProductsForAdmin = (req, res) => {
         populate: { path: 'variantId' }
       })
       .populate('storeId', '_id name avatar isActive isOpen ownerId')
+      .populate('brandId', '_id name')
       .exec()
       .then((products) => {
         return res.json({

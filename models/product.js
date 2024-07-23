@@ -61,6 +61,10 @@ const productSchema = new mongoose.Schema(
       ref: 'Category',
       required: true
     },
+    brandId: {
+      type: ObjectId,
+      ref: 'Brand'
+    },
     variantValueIds: {
       type: [
         {
