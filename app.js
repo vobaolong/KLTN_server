@@ -44,13 +44,13 @@ mongoose
 
 // app.use(morgan('dev'))
 app.use('/static', express.static(path.join(__dirname, 'public')))
-app.use(express.urlencoded({ extended: true }))
-const apiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minutes
-  max: 2,
-  message: 'Too many connection'
-})
-app.use(apiLimiter)
+// app.use(express.urlencoded({ extended: true }))
+// const apiLimiter = rateLimit({
+//   windowMs: 60 * 1000, // 1 minutes
+//   max: 2,
+//   message: 'Too many connection'
+// })
+// app.use(apiLimiter)
 
 app.use(express.json())
 app.use(cookieParser())
@@ -63,10 +63,10 @@ app.use(
   })
 )
 
-app.use(
-  express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 })
-)
-app.use(express.json({ limit: '50mb' }))
+// app.use(
+//   express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 })
+// )
+// app.use(express.json({ limit: '50mb' }))
 
 app.use('/api', authRoutes)
 app.use('/api', userRoutes)
