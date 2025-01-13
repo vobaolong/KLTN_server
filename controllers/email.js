@@ -38,7 +38,9 @@ exports.sendChangePasswordEmail = (req, res, next) => {
                       ? `<button style="background-color:#0d6efd; border:none; border-radius:4px; padding:0;">
                        <a
                           style="color:#fff; text-decoration:none; font-size:16px; padding: 16px 32px; display: inline-block;"
-                            href='http://localhost:${process.env.CLIENT_PORT_1}/change/password/${code}'
+                            href='http://localhost:${
+                              process.env.CLIENT_PORT_1 || 5173
+                            }/change/password/${code}'
                             >
                           	Thay đổi mật khẩu!
                             </a>
@@ -104,7 +106,9 @@ exports.sendConfirmationEmail = (req, res) => {
                     <button style="background-color:#0d6efd; border:none; border-radius:4px; padding:0;">
                         <a
                             style="color:#fff; text-decoration:none; font-size:16px; padding: 16px 32px; display: inline-block;"
-                            href='http://localhost:${process.env.CLIENT_PORT_1}/verify/email/${email_code}'
+                            href='http://localhost:${
+                              process.env.CLIENT_PORT_1 || 5173
+                            }/verify/email/${email_code}'
                         >
                        	Xác thực ngay!
                         </a>

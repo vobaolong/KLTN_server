@@ -45,29 +45,29 @@ mongoose
 // app.use(morgan('dev'))
 app.use('/static', express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({ extended: true }))
-// const apiLimiter = rateLimit({
-//   windowMs: 60 * 1000, // 1 minutes
-//   max: 2,
-//   message: 'Too many connection'
-// })
-// app.use(apiLimiter)
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minutes
+  max: 2,
+  message: 'Too many connection'
+})
+app.use(apiLimiter)
+
 app.use(express.json())
 app.use(cookieParser())
 app.use(
   cors({
-    origin: [
-      `http://localhost:${process.env.CLIENT_PORT_1}`,
-      `http://localhost:${process.env.CLIENT_PORT_2}`,
-      `http://localhost:${process.env.CLIENT_PORT_3}`
-    ],
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
   })
 )
 
-// app.use(express.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
-// app.use(express.json({limit: "50mb"}));
+app.use(
+  express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 })
+)
+app.use(express.json({ limit: '50mb' }))
+
 app.use('/api', authRoutes)
 app.use('/api', userRoutes)
 app.use('/api', storeRoutes)
